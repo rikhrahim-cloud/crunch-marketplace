@@ -240,25 +240,32 @@
                             <>
                                 {/* Hero */}
                                 <section className="py-24 px-6 bg-white">
-                                    <div className="max-w-4xl mx-auto text-center">
-                                        <h1 className="text-6xl md:text-7xl font-bold mb-6 fade-in-up">
-                                            Uber For Side Hustles
-                                        </h1>
-                                        <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-                                            Connect with skilled local professionals for every service you need
-                                        </p>
-                                        <div className="max-w-2xl mx-auto">
-                                            <div className="flex items-center bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Search for any service..."
-                                                    className="flex-1 px-6 py-4 text-base focus:outline-none bg-transparent"
-                                                    value={searchTerm}
-                                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                                />
-                                                <button className="px-8 py-4 bg-black text-white text-sm font-medium hover:bg-gray-800 transition">
-                                                    SEARCH
-                                                </button>
+                                    <div className="max-w-7xl mx-auto">
+                                        <div className="grid md:grid-cols-2 gap-12 items-center">
+                                            <div>
+                                                <h1 className="text-6xl md:text-7xl font-bold mb-6 fade-in-up">
+                                                    Uber For Side Hustles
+                                                </h1>
+                                                <p className="text-xl text-gray-600 mb-12">
+                                                    Connect with skilled local professionals for every service you need
+                                                </p>
+                                                <div className="max-w-xl">
+                                                    <div className="flex items-center bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Search for any service..."
+                                                            className="flex-1 px-6 py-4 text-base focus:outline-none bg-transparent"
+                                                            value={searchTerm}
+                                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                                        />
+                                                        <button className="px-8 py-4 bg-black text-white text-sm font-medium hover:bg-gray-800 transition">
+                                                            SEARCH
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="hidden md:block">
+                                                <img src="hero-image.jpg" alt="African Services" className="w-full h-auto rounded-lg shadow-lg" />
                                             </div>
                                         </div>
                                     </div>
