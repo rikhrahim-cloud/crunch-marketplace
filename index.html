@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUNCH - Home Services Marketplace</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link id="google-fonts" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        :root {
+            --brand-primary: #2563eb;
+            --brand-secondary: #7c3aed;
+            --brand-accent: #10b981;
+            --brand-danger: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // ============================================
+        // 🎨 CUSTOMIZATION SETTINGS - EDIT THESE!
+        // ============================================
+        const BRAND_CONFIG = {
+            // Brand Name
+            name: "CRUNCH",
+            
+            // Logo Settings
+            logo: {
+                type: "text", // Options: "text", "image", "emoji"
+                text: "C", // Letter to show if type is "text"
+                emoji: "🏠", // Emoji to show if type is "emoji"
+                imageUrl: "", // URL to your logo if type is "image" (e.g., "https://yoursite.com/logo.png")
+                size: "40px" // Size of logo
+            },
+            
+            // Colors (use hex codes or CSS color names)
+            colors: {
+                primary: "#2563eb", // Main brand color (blue by default)
+                secondary: "#7c3aed", // Secondary color (purple by default)
+                accent: "#10b981", // Accent color for success/verified
+                danger: "#ef4444" // Danger color for delete/warnings
+            },
+            
+            // Typography
+            fonts: {
+                main: "Inter", // Main font family
+                heading: "Inter", // Heading font (can be different)
+                googleFonts: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+                // To use custom fonts, change the URL above
+                // Examples:
+                // Poppins: "https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+                // Roboto: "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
+                // Montserrat: "https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+            },
+            
+            // Tagline
+            tagline: "Home Services, Simplified",
+            subtitle: "Connect with trusted local professionals for all your home needs"
+        };
+
+        // Mock data for service providers
+        const mockProviders = [
+            {
+                id: 1,
+                name: "Crystal Clean Services",
+                category: "Cleaning",
+                rating: 4.9,
+                reviewCount: 247,
+                hourlyRate: 45,
+                image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop",
+                description: "Professional residential and commercial cleaning with eco-friendly products",
+                verified: true,
+                responseTime: "30 mins",
+                completedJobs: 312
+            },
+            {
+                id: 2,
+                name: "HandyPro Solutions",
+                category: "Handyman",
+                rating: 4.8,
+                reviewCount: 189,
+                hourlyRate: 65,
+                image: "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=400&h=300&fit=crop",
+                description: "Expert repairs, installations, and home improvements",
+                verified: true,
+                responseTime: "1 hour",
+                completedJobs: 256
+            },
+            {
+                id: 3,
+                name: "GreenThumb Landscaping",
+                category: "Landscaping",
+                rating: 4.7,
+                reviewCount: 156,
+                hourlyRate: 55,
+                image: "https://images.unsplash.com/photo-1558904541-efa843a96f01?w=400&h=300&fit=crop",
+                description: "Lawn care, garden design, and outdoor maintenance",
+                verified: true,
+                responseTime: "2 hours",
+                completedJobs: 198
+            },
+            {
+                id: 4,
+                name: "QuickFix Plumbing",
+                category: "Plumbing",
+                rating: 4.9,
+                reviewCount: 203,
+                hourlyRate: 85,
+                image: "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=400&h=300&fit=crop",
+                description: "24/7 emergency plumbing and installation services",
+                verified: true,
+                responseTime: "15 mins",
+                completedJobs: 378
+            },
+            {
+                id: 5,
+                name: "Sparkle Windows",
+                category: "Cleaning",
+                rating: 4.6,
+                reviewCount: 98,
+                hourlyRate: 40,
+                image: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=400&h=300&fit=crop",
+                description: "Residential and commercial window cleaning specialists",
+                verified: false,
+                responseTime: "3 hours",
+                completedJobs: 145
+            },
+            {
+                id: 6,
+                name: "ElectricPro Services",
+                category: "Electrical",
+                rating: 4.8,
+                reviewCount: 167,
+                hourlyRate: 90,
+                image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=400&h=300&fit=crop",
+                description: "Licensed electricians for installations and repairs",
+                verified: true,
+                responseTime: "45 mins",
+                completedJobs: 289
+            }
+        ];
+
+        const mockReviews = {
+            1: [
+                { id: 1, user: "Sarah M.", rating: 5, date: "2 days ago", comment: "Absolutely fantastic service! My house has never looked cleaner. Very professional team." },
+                { id: 2, user: "Mike T.", rating: 5, date: "1 week ago", comment: "Great attention to detail and very friendly. Will definitely book again!" },
+                { id: 3, user: "Jennifer L.", rating: 4, date: "2 weeks ago", comment: "Very good service, arrived on time and did a thorough job." }
+            ],
+            2: [
+                { id: 1, user: "David K.", rating: 5, date: "3 days ago", comment: "Fixed my leaky faucet and hung several pictures. Very skilled and efficient!" },
+                { id: 2, user: "Emma R.", rating: 5, date: "1 week ago", comment: "Excellent handyman service. Fixed multiple issues in one visit." }
+            ]
+        };
+
+        function CrunchApp() {
+            const [currentView, setCurrentView] = useState('home');
+            const [selectedProvider, setSelectedProvider] = useState(null);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [selectedCategory, setSelectedCategory] = useState('All');
+            const [bookingStep, setBookingStep] = useState(1);
+            const [bookingData, setBookingData] = useState({
+                date: '',
+                time: '',
+                hours: 2,
+                address: '',
+                notes: ''
+            });
+            const [showPaymentModal, setShowPaymentModal] = useState(false);
+            const [providers, setProviders] = useState(mockProviders);
+            const [isAdmin, setIsAdmin] = useState(false);
+            const [editingProvider, setEditingProvider] = useState(null);
+            const [showProviderForm, setShowProviderForm] = useState(false);
+            const [providerForm, setProviderForm] = useState({
+                name: '',
+                category: 'Cleaning',
+                rating: 5.0,
+                reviewCount: 0,
+                hourlyRate: 50,
+                image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop',
+                description: '',
+                verified: false,
+                responseTime: '1 hour',
+                completedJobs: 0
+            });
+
+            const categories = ['All', 'Cleaning', 'Handyman', 'Plumbing', 'Electrical', 'Landscaping'];
+
+            // Apply custom branding on load
+            useEffect(() => {
+                // Update fonts
+                const fontLink = document.getElementById('google-fonts');
+                if (fontLink) {
+                    fontLink.href = BRAND_CONFIG.fonts.googleFonts;
+                }
+                document.body.style.fontFamily = `'${BRAND_CONFIG.fonts.main}', sans-serif`;
+                
+                // Update CSS variables for colors
+                document.documentElement.style.setProperty('--brand-primary', BRAND_CONFIG.colors.primary);
+                document.documentElement.style.setProperty('--brand-secondary', BRAND_CONFIG.colors.secondary);
+                document.documentElement.style.setProperty('--brand-accent', BRAND_CONFIG.colors.accent);
+                document.documentElement.style.setProperty('--brand-danger', BRAND_CONFIG.colors.danger);
+            }, []);
+
+            const addProvider = () => {
+                const newProvider = {
+                    ...providerForm,
+                    id: Date.now(),
+                    rating: parseFloat(providerForm.rating),
+                    reviewCount: parseInt(providerForm.reviewCount),
+                    hourlyRate: parseFloat(providerForm.hourlyRate),
+                    completedJobs: parseInt(providerForm.completedJobs)
+                };
+                setProviders([...providers, newProvider]);
+                setShowProviderForm(false);
+                resetProviderForm();
+            };
+
+            const updateProvider = () => {
+                setProviders(providers.map(p => p.id === editingProvider.id ? {...providerForm, id: editingProvider.id} : p));
+                setShowProviderForm(false);
+                setEditingProvider(null);
+                resetProviderForm();
+            };
+
+            const deleteProvider = (id) => {
+                if (window.confirm('Are you sure you want to delete this provider?')) {
+                    setProviders(providers.filter(p => p.id !== id));
+                }
+            };
+
+            const resetProviderForm = () => {
+                setProviderForm({
+                    name: '',
+                    category: 'Cleaning',
+                    rating: 5.0,
+                    reviewCount: 0,
+                    hourlyRate: 50,
+                    image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=300&fit=crop',
+                    description: '',
+                    verified: false,
+                    responseTime: '1 hour',
+                    completedJobs: 0
+                });
+            };
+
+            const openEditForm = (provider) => {
+                setEditingProvider(provider);
+                setProviderForm(provider);
+                setShowProviderForm(true);
+                setCurrentView('admin');
+            };
+
+            const filteredProviders = providers.filter(provider => {
+                const matchesSearch = provider.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    provider.description.toLowerCase().includes(searchTerm.toLowerCase());
+                const matchesCategory = selectedCategory === 'All' || provider.category === selectedCategory;
+                return matchesSearch && matchesCategory;
+            });
+
+            const viewProvider = (provider) => {
+                setSelectedProvider(provider);
+                setCurrentView('provider');
+            };
+
+            const startBooking = () => {
+                setCurrentView('booking');
+                setBookingStep(1);
+            };
+
+            const handleBookingSubmit = () => {
+                setShowPaymentModal(true);
+            };
+
+            const handlePayment = () => {
+                setShowPaymentModal(false);
+                setCurrentView('confirmation');
+            };
+
+            // Logo Component
+            const Logo = ({ size = 'default' }) => {
+                const logoSize = size === 'small' ? '32px' : BRAND_CONFIG.logo.size;
+                const textSize = size === 'small' ? 'text-lg' : 'text-2xl';
+                
+                return (
+                    <div className="flex items-center cursor-pointer" onClick={() => setCurrentView('home')}>
+                        {BRAND_CONFIG.logo.type === 'image' && BRAND_CONFIG.logo.imageUrl ? (
+                            <img 
+                                src={BRAND_CONFIG.logo.imageUrl} 
+                                alt={BRAND_CONFIG.name}
+                                style={{ width: logoSize, height: logoSize }}
+                                className="rounded-lg"
+                            />
+                        ) : BRAND_CONFIG.logo.type === 'emoji' ? (
+                            <div 
+                                className="rounded-lg flex items-center justify-center"
+                                style={{ 
+                                    width: logoSize, 
+                                    height: logoSize,
+                                    fontSize: size === 'small' ? '20px' : '24px'
+                                }}
+                            >
+                                {BRAND_CONFIG.logo.emoji}
+                            </div>
+                        ) : (
+                            <div 
+                                className="rounded-lg flex items-center justify-center"
+                                style={{ 
+                                    width: logoSize, 
+                                    height: logoSize,
+                                    background: `linear-gradient(135deg, ${BRAND_CONFIG.colors.primary}, ${BRAND_CONFIG.colors.secondary})`
+                                }}
+                            >
+                                <span className="text-white font-bold" style={{ fontSize: size === 'small' ? '18px' : '20px' }}>
+                                    {BRAND_CONFIG.logo.text}
+                                </span>
+                            </div>
+                        )}
+                        <span className={`ml-3 ${textSize} font-bold text-gray-900`} style={{ fontFamily: `'${BRAND_CONFIG.fonts.heading}', sans-serif` }}>
+                            {BRAND_CONFIG.name}
+                        </span>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="min-h-screen">
+                    {/* Header */}
+                    <header className="bg-white shadow-sm sticky top-0 z-50">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center py-4">
+                                <Logo />
+                                <nav className="hidden md:flex space-x-8">
+                                    <button className="text-gray-700 hover:text-blue-600 font-medium">Browse Services</button>
+                                    <button className="text-gray-700 hover:text-blue-600 font-medium">How It Works</button>
+                                    <button className="text-gray-700 hover:text-blue-600 font-medium">Become a Pro</button>
+                                </nav>
+                                <div className="flex items-center space-x-4">
+                                    <button 
+                                        onClick={() => {
+                                            setIsAdmin(!isAdmin);
+                                            if (!isAdmin) setCurrentView('admin');
+                                        }}
+                                        className={`px-4 py-2 rounded-lg font-medium ${isAdmin ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                    >
+                                        {isAdmin ? '🔓 Admin Mode' : '🔒 Admin'}
+                                    </button>
+                                    <button className="text-gray-700 hover:text-blue-600 font-medium">Sign In</button>
+                                    <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-medium">Sign Up</button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content */}
+                    {currentView === 'admin' && isAdmin && (
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                            <div className="flex justify-between items-center mb-8">
+                                <h1 className="text-4xl font-bold text-gray-900">Admin Panel - Manage Services</h1>
+                                <button
+                                    onClick={() => {
+                                        setShowProviderForm(true);
+                                        setEditingProvider(null);
+                                        resetProviderForm();
+                                    }}
+                                    className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-medium flex items-center gap-2"
+                                >
+                                    <span className="text-xl">+</span> Add New Provider
+                                </button>
+                            </div>
+
+                            {showProviderForm && (
+                                <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+                                    <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                                        {editingProvider ? 'Edit Provider' : 'Add New Provider'}
+                                    </h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Provider Name*</label>
+                                            <input
+                                                type="text"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={providerForm.name}
+                                                onChange={(e) => setProviderForm({...providerForm, name: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Category*</label>
+                                            <select
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={providerForm.category}
+                                                onChange={(e) => setProviderForm({...providerForm, category: e.target.value})}
+                                            >
+                                                <option value="Cleaning">Cleaning</option>
+                                                <option value="Handyman">Handyman</option>
+                                                <option value="Plumbing">Plumbing</option>
+                                                <option value="Electrical">Electrical</option>
+                                                <option value="Landscaping">Landscaping</option>
+                                                <option value="Painting">Painting</option>
+                                                <option value="Carpentry">Carpentry</option>
+                                                <option value="HVAC">HVAC</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Hourly Rate ($)*</label>
+                                            <input
+                                                type="number"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={providerForm.hourlyRate}
+                                                onChange={(e) => setProviderForm({...providerForm, hourlyRate: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Rating (0-5)</label>
+                                            <input
+                                                type="number"
+                                                step="0.1"
+                                                min="0"
+                                                max="5"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={providerForm.rating}
+                                                onChange={(e) => setProviderForm({...providerForm, rating: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Review Count</label>
+                                            <input
+                                                type="number"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={providerForm.reviewCount}
+                                                onChange={(e) => setProviderForm({...providerForm, reviewCount: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Completed Jobs</label>
+                                            <input
+                                                type="number"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={providerForm.completedJobs}
+                                                onChange={(e) => setProviderForm({...providerForm, completedJobs: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Response Time</label>
+                                            <input
+                                                type="text"
+                                                placeholder="e.g., 30 mins, 2 hours"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={providerForm.responseTime}
+                                                onChange={(e) => setProviderForm({...providerForm, responseTime: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                                            <input
+                                                type="text"
+                                                placeholder="https://..."
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={providerForm.image}
+                                                onChange={(e) => setProviderForm({...providerForm, image: e.target.value})}
+                                            />
+                                        </div>
+                                        <div className="md:col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Description*</label>
+                                            <textarea
+                                                rows="3"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={providerForm.description}
+                                                onChange={(e) => setProviderForm({...providerForm, description: e.target.value})}
+                                            ></textarea>
+                                        </div>
+                                        <div className="md:col-span-2">
+                                            <label className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                                                    checked={providerForm.verified}
+                                                    onChange={(e) => setProviderForm({...providerForm, verified: e.target.checked})}
+                                                />
+                                                <span className="ml-3 text-sm font-medium text-gray-700">Verified Provider</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3 mt-6">
+                                        <button
+                                            onClick={() => {
+                                                setShowProviderForm(false);
+                                                setEditingProvider(null);
+                                                resetProviderForm();
+                                            }}
+                                            className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 font-medium"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={editingProvider ? updateProvider : addProvider}
+                                            disabled={!providerForm.name || !providerForm.description || !providerForm.hourlyRate}
+                                            className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                        >
+                                            {editingProvider ? 'Update Provider' : 'Add Provider'}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead className="bg-gray-50 border-b">
+                                            <tr>
+                                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Provider</th>
+                                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Category</th>
+                                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Rate</th>
+                                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Rating</th>
+                                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Jobs</th>
+                                                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Status</th>
+                                                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200">
+                                            {providers.map(provider => (
+                                                <tr key={provider.id} className="hover:bg-gray-50">
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center">
+                                                            <img src={provider.image} alt={provider.name} className="w-12 h-12 rounded-lg object-cover mr-3" />
+                                                            <div>
+                                                                <div className="font-medium text-gray-900">{provider.name}</div>
+                                                                <div className="text-sm text-gray-500">{provider.description.substring(0, 30)}...</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-gray-700">{provider.category}</td>
+                                                    <td className="px-6 py-4 text-sm font-medium text-gray-900">${provider.hourlyRate}/hr</td>
+                                                    <td className="px-6 py-4 text-sm">
+                                                        <div className="flex items-center">
+                                                            <span className="text-yellow-500 mr-1">★</span>
+                                                            <span className="font-medium text-gray-900">{provider.rating}</span>
+                                                            <span className="text-gray-500 ml-1">({provider.reviewCount})</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-gray-700">{provider.completedJobs}</td>
+                                                    <td className="px-6 py-4">
+                                                        {provider.verified ? (
+                                                            <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium">
+                                                                ✓ Verified
+                                                            </span>
+                                                        ) : (
+                                                            <span className="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full font-medium">
+                                                                Pending
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right">
+                                                        <button
+                                                            onClick={() => openEditForm(provider)}
+                                                            className="text-blue-600 hover:text-blue-700 font-medium mr-4"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={() => deleteProvider(provider.id)}
+                                                            className="text-red-600 hover:text-red-700 font-medium"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {currentView === 'home' && (
+                        <>
+                            {/* Hero Section */}
+                            <div style={{ background: `linear-gradient(135deg, ${BRAND_CONFIG.colors.primary}, ${BRAND_CONFIG.colors.secondary})` }} className="text-white">
+                                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                                    <div className="text-center">
+                                        <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{ fontFamily: `'${BRAND_CONFIG.fonts.heading}', sans-serif` }}>
+                                            {BRAND_CONFIG.tagline}
+                                        </h1>
+                                        <p className="text-xl md:text-2xl mb-8 opacity-90">
+                                            {BRAND_CONFIG.subtitle}
+                                        </p>
+                                        <div className="max-w-3xl mx-auto">
+                                            <div className="bg-white rounded-xl shadow-2xl p-2 flex flex-col md:flex-row gap-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="What service do you need?"
+                                                    className="flex-1 px-6 py-4 text-gray-900 rounded-lg focus:outline-none text-lg"
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                />
+                                                <button className="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 font-semibold text-lg">
+                                                    Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Categories */}
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                                <h2 className="text-3xl font-bold text-gray-900 mb-8">Popular Categories</h2>
+                                <div className="flex flex-wrap gap-3">
+                                    {categories.map(category => (
+                                        <button
+                                            key={category}
+                                            onClick={() => setSelectedCategory(category)}
+                                            className={`px-6 py-3 rounded-lg font-medium transition-all ${
+                                                selectedCategory === category
+                                                    ? 'bg-blue-600 text-white shadow-lg'
+                                                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                                            }`}
+                                        >
+                                            {category}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Service Providers Grid */}
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                                <div className="flex justify-between items-center mb-8">
+                                    <h2 className="text-3xl font-bold text-gray-900">
+                                        {selectedCategory === 'All' ? 'All Professionals' : selectedCategory + ' Services'}
+                                    </h2>
+                                    <span className="text-gray-600">{filteredProviders.length} professionals available</span>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {filteredProviders.map(provider => (
+                                        <div key={provider.id} className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all overflow-hidden">
+                                            <div className="relative">
+                                                <img src={provider.image} alt={provider.name} className="w-full h-48 object-cover" />
+                                                {isAdmin && (
+                                                    <div className="absolute top-2 right-2 flex gap-2">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                openEditForm(provider);
+                                                            }}
+                                                            className="bg-white text-blue-600 p-2 rounded-lg shadow-lg hover:bg-blue-50 font-medium text-sm"
+                                                        >
+                                                            ✏️ Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                deleteProvider(provider.id);
+                                                            }}
+                                                            className="bg-white text-red-600 p-2 rounded-lg shadow-lg hover:bg-red-50 font-medium text-sm"
+                                                        >
+                                                            🗑️
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="p-6 cursor-pointer" onClick={() => viewProvider(provider)}>
+                                                <div className="flex items-start justify-between mb-2">
+                                                    <div>
+                                                        <h3 className="text-xl font-bold text-gray-900 mb-1">{provider.name}</h3>
+                                                        <span className="text-sm text-blue-600 font-medium">{provider.category}</span>
+                                                    </div>
+                                                    {provider.verified && (
+                                                        <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
+                                                            ✓ Verified
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-gray-600 text-sm mb-4">{provider.description}</p>
+                                                <div className="flex items-center justify-between text-sm mb-3">
+                                                    <div className="flex items-center">
+                                                        <span className="text-yellow-500 mr-1">★</span>
+                                                        <span className="font-semibold text-gray-900">{provider.rating}</span>
+                                                        <span className="text-gray-500 ml-1">({provider.reviewCount})</span>
+                                                    </div>
+                                                    <span className="text-gray-500">{provider.completedJobs} jobs done</span>
+                                                </div>
+                                                <div className="flex items-center justify-between pt-3 border-t">
+                                                    <div>
+                                                        <span className="text-2xl font-bold text-gray-900">${provider.hourlyRate}</span>
+                                                        <span className="text-gray-500">/hr</span>
+                                                    </div>
+                                                    <button className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 font-medium">
+                                                        View Profile
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {currentView === 'provider' && selectedProvider && (
+                        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                            <button onClick={() => setCurrentView('home')} className="text-blue-600 hover:text-blue-700 mb-6 flex items-center font-medium">
+                                ← Back to search
+                            </button>
+
+                            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                                <img src={selectedProvider.image} alt={selectedProvider.name} className="w-full h-64 object-cover" />
+                                
+                                <div className="p-8">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div>
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <h1 className="text-4xl font-bold text-gray-900">{selectedProvider.name}</h1>
+                                                {selectedProvider.verified && (
+                                                    <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full font-medium">
+                                                        ✓ Verified Pro
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-xl text-gray-600">{selectedProvider.category} Services</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-3xl font-bold text-gray-900">${selectedProvider.hourlyRate}<span className="text-xl text-gray-500">/hr</span></div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-4 mb-8 p-4 bg-gray-50 rounded-lg">
+                                        <div className="text-center">
+                                            <div className="flex items-center justify-center mb-1">
+                                                <span className="text-yellow-500 text-xl mr-1">★</span>
+                                                <span className="text-2xl font-bold text-gray-900">{selectedProvider.rating}</span>
+                                            </div>
+                                            <span className="text-sm text-gray-600">{selectedProvider.reviewCount} reviews</span>
+                                        </div>
+                                        <div className="text-center border-l border-r border-gray-200">
+                                            <div className="text-2xl font-bold text-gray-900 mb-1">{selectedProvider.completedJobs}</div>
+                                            <span className="text-sm text-gray-600">Jobs completed</span>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-gray-900 mb-1">{selectedProvider.responseTime}</div>
+                                            <span className="text-sm text-gray-600">Response time</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-8">
+                                        <h2 className="text-2xl font-bold text-gray-900 mb-4">About</h2>
+                                        <p className="text-gray-700 leading-relaxed">{selectedProvider.description}</p>
+                                    </div>
+
+                                    <div className="mb-8">
+                                        <h2 className="text-2xl font-bold text-gray-900 mb-4">Reviews</h2>
+                                        <div className="space-y-4">
+                                            {(mockReviews[selectedProvider.id] || mockReviews[1]).map(review => (
+                                                <div key={review.id} className="bg-gray-50 rounded-lg p-6">
+                                                    <div className="flex items-center justify-between mb-3">
+                                                        <div>
+                                                            <span className="font-semibold text-gray-900">{review.user}</span>
+                                                            <span className="text-gray-500 text-sm ml-2">{review.date}</span>
+                                                        </div>
+                                                        <div className="flex items-center">
+                                                            {[...Array(review.rating)].map((_, i) => (
+                                                                <span key={i} className="text-yellow-500">★</span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-gray-700">{review.comment}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={startBooking}
+                                        className="w-full bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 font-semibold text-lg shadow-lg"
+                                    >
+                                        Book Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {currentView === 'booking' && selectedProvider && (
+                        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                            <button onClick={() => setCurrentView('provider')} className="text-blue-600 hover:text-blue-700 mb-6 flex items-center font-medium">
+                                ← Back to profile
+                            </button>
+
+                            <div className="bg-white rounded-xl shadow-lg p-8">
+                                <h1 className="text-3xl font-bold text-gray-900 mb-2">Book {selectedProvider.name}</h1>
+                                <p className="text-gray-600 mb-8">Complete the booking details below</p>
+
+                                {/* Booking Steps */}
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${bookingStep >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>1</div>
+                                        <span className="ml-3 font-medium text-gray-900">Date & Time</span>
+                                    </div>
+                                    <div className="flex-1 h-1 bg-gray-200 mx-4"></div>
+                                    <div className="flex items-center">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${bookingStep >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>2</div>
+                                        <span className="ml-3 font-medium text-gray-900">Details</span>
+                                    </div>
+                                    <div className="flex-1 h-1 bg-gray-200 mx-4"></div>
+                                    <div className="flex items-center">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${bookingStep >= 3 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}`}>3</div>
+                                        <span className="ml-3 font-medium text-gray-900">Review</span>
+                                    </div>
+                                </div>
+
+                                {bookingStep === 1 && (
+                                    <div className="space-y-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
+                                            <input
+                                                type="date"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={bookingData.date}
+                                                onChange={(e) => setBookingData({...bookingData, date: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Select Time</label>
+                                            <input
+                                                type="time"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={bookingData.time}
+                                                onChange={(e) => setBookingData({...bookingData, time: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Duration (hours)</label>
+                                            <select
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={bookingData.hours}
+                                                onChange={(e) => setBookingData({...bookingData, hours: parseInt(e.target.value)})}
+                                            >
+                                                <option value="1">1 hour</option>
+                                                <option value="2">2 hours</option>
+                                                <option value="3">3 hours</option>
+                                                <option value="4">4 hours</option>
+                                                <option value="5">5+ hours</option>
+                                            </select>
+                                        </div>
+                                        <button
+                                            onClick={() => setBookingStep(2)}
+                                            disabled={!bookingData.date || !bookingData.time}
+                                            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                        >
+                                            Continue to Details
+                                        </button>
+                                    </div>
+                                )}
+
+                                {bookingStep === 2 && (
+                                    <div className="space-y-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Service Address</label>
+                                            <input
+                                                type="text"
+                                                placeholder="123 Main St, City, State 12345"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={bookingData.address}
+                                                onChange={(e) => setBookingData({...bookingData, address: e.target.value})}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Additional Notes (Optional)</label>
+                                            <textarea
+                                                placeholder="Any specific requirements or details..."
+                                                rows="4"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value={bookingData.notes}
+                                                onChange={(e) => setBookingData({...bookingData, notes: e.target.value})}
+                                            ></textarea>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={() => setBookingStep(1)}
+                                                className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 font-medium"
+                                            >
+                                                Back
+                                            </button>
+                                            <button
+                                                onClick={() => setBookingStep(3)}
+                                                disabled={!bookingData.address}
+                                                className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                            >
+                                                Review Booking
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {bookingStep === 3 && (
+                                    <div className="space-y-6">
+                                        <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+                                            <h3 className="font-semibold text-gray-900 text-lg mb-4">Booking Summary</h3>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Service Provider</span>
+                                                <span className="font-medium text-gray-900">{selectedProvider.name}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Date</span>
+                                                <span className="font-medium text-gray-900">{bookingData.date}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Time</span>
+                                                <span className="font-medium text-gray-900">{bookingData.time}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Duration</span>
+                                                <span className="font-medium text-gray-900">{bookingData.hours} hours</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-600">Address</span>
+                                                <span className="font-medium text-gray-900 text-right max-w-xs">{bookingData.address}</span>
+                                            </div>
+                                            {bookingData.notes && (
+                                                <div className="flex justify-between">
+                                                    <span className="text-gray-600">Notes</span>
+                                                    <span className="font-medium text-gray-900 text-right max-w-xs">{bookingData.notes}</span>
+                                                </div>
+                                            )}
+                                            <div className="border-t pt-4 mt-4">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-lg font-semibold text-gray-900">Total Cost</span>
+                                                    <span className="text-2xl font-bold text-blue-600">${selectedProvider.hourlyRate * bookingData.hours}</span>
+                                                </div>
+                                                <p className="text-sm text-gray-500 mt-1 text-right">${selectedProvider.hourlyRate}/hr × {bookingData.hours} hours</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={() => setBookingStep(2)}
+                                                className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 font-medium"
+                                            >
+                                                Back
+                                            </button>
+                                            <button
+                                                onClick={handleBookingSubmit}
+                                                className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium"
+                                            >
+                                                Proceed to Payment
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {currentView === 'confirmation' && (
+                        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                            <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <h1 className="text-3xl font-bold text-gray-900 mb-4">Booking Confirmed!</h1>
+                                <p className="text-gray-600 mb-8">Your booking with {selectedProvider.name} has been confirmed.</p>
+                                <div className="bg-gray-50 rounded-lg p-6 mb-8 text-left">
+                                    <h3 className="font-semibold text-gray-900 mb-4">Booking Details</h3>
+                                    <div className="space-y-2">
+                                        <p className="text-gray-700"><span className="font-medium">Date:</span> {bookingData.date}</p>
+                                        <p className="text-gray-700"><span className="font-medium">Time:</span> {bookingData.time}</p>
+                                        <p className="text-gray-700"><span className="font-medium">Duration:</span> {bookingData.hours} hours</p>
+                                        <p className="text-gray-700"><span className="font-medium">Total Paid:</span> ${selectedProvider.hourlyRate * bookingData.hours}</p>
+                                    </div>
+                                </div>
+                                <p className="text-gray-600 mb-6">A confirmation email has been sent to your inbox.</p>
+                                <button
+                                    onClick={() => {
+                                        setCurrentView('home');
+                                        setSelectedProvider(null);
+                                        setBookingData({ date: '', time: '', hours: 2, address: '', notes: '' });
+                                    }}
+                                    className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 font-medium"
+                                >
+                                    Back to Home
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Payment Modal */}
+                    {showPaymentModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8">
+                                <h2 className="text-2xl font-bold text-gray-900 mb-6">Payment Information</h2>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                                        <input
+                                            type="text"
+                                            placeholder="1234 5678 9012 3456"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                                            <input
+                                                type="text"
+                                                placeholder="MM/YY"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                                            <input
+                                                type="text"
+                                                placeholder="123"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-lg p-4 mt-6">
+                                        <div className="flex justify-between mb-2">
+                                            <span className="text-gray-600">Subtotal</span>
+                                            <span className="font-medium text-gray-900">${selectedProvider.hourlyRate * bookingData.hours}</span>
+                                        </div>
+                                        <div className="flex justify-between mb-2">
+                                            <span className="text-gray-600">Service Fee</span>
+                                            <span className="font-medium text-gray-900">$5</span>
+                                        </div>
+                                        <div className="border-t pt-2 mt-2">
+                                            <div className="flex justify-between">
+                                                <span className="text-lg font-semibold text-gray-900">Total</span>
+                                                <span className="text-xl font-bold text-blue-600">${selectedProvider.hourlyRate * bookingData.hours + 5}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-3 mt-6">
+                                        <button
+                                            onClick={() => setShowPaymentModal(false)}
+                                            className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 font-medium"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handlePayment}
+                                            className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium"
+                                        >
+                                            Pay Now
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Footer */}
+                    <footer className="bg-gray-900 text-white mt-20">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                                <div>
+                                    <Logo size="small" />
+                                    <p className="text-gray-400 mt-4">Your trusted home services marketplace</p>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold mb-4">For Customers</h4>
+                                    <ul className="space-y-2 text-gray-400">
+                                        <li><a href="#" className="hover:text-white">Browse Services</a></li>
+                                        <li><a href="#" className="hover:text-white">How It Works</a></li>
+                                        <li><a href="#" className="hover:text-white">Safety Center</a></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold mb-4">For Professionals</h4>
+                                    <ul className="space-y-2 text-gray-400">
+                                        <li><a href="#" className="hover:text-white">Become a Pro</a></li>
+                                        <li><a href="#" className="hover:text-white">Resources</a></li>
+                                        <li><a href="#" className="hover:text-white">Success Stories</a></li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold mb-4">Company</h4>
+                                    <ul className="space-y-2 text-gray-400">
+                                        <li><a href="#" className="hover:text-white">About Us</a></li>
+                                        <li><a href="#" className="hover:text-white">Contact</a></li>
+                                        <li><a href="#" className="hover:text-white">Careers</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                                <p>&copy; 2026 {BRAND_CONFIG.name}. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<CrunchApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
