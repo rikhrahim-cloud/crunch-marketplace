@@ -10,7 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -23,15 +23,12 @@
             background: #FAFAFA;
             color: #1a1a1a;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
-        
-        .serif { font-family: 'Cormorant Garamond', serif; }
         
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -39,58 +36,21 @@
             }
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
         .fade-in-up {
-            animation: fadeInUp 0.8s ease-out forwards;
+            animation: fadeInUp 0.6s ease-out forwards;
         }
-        
-        .fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-        
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
-        .stagger-4 { animation-delay: 0.4s; }
-        .stagger-5 { animation-delay: 0.5s; }
-        .stagger-6 { animation-delay: 0.6s; }
         
         .card-hover {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        }
-        
-        .btn-minimal {
-            position: relative;
-            overflow: hidden;
             transition: all 0.3s ease;
         }
         
-        .btn-minimal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.05);
-            transition: left 0.3s ease;
-        }
-        
-        .btn-minimal:hover::before {
-            left: 100%;
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
         }
         
         .border-minimal {
-            border: 1px solid rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
         }
         
         .tag {
@@ -100,11 +60,13 @@
             letter-spacing: 0.5px;
             text-transform: uppercase;
             font-weight: 500;
-            border-radius: 2px;
+            border-radius: 4px;
         }
 
-        .gradient-bg {
-            background: linear-gradient(135deg, #FF6B9D 0%, #C239B3 50%, #44107A 100%);
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
         }
     </style>
 </head>
@@ -114,159 +76,160 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Service providers with authentic African context
-        const allProviders = [
-            // Household Services
-            { id: 1, name: "Fatima's Laundry", category: "Household Services", service: "Laundry woman", rating: 4.9, reviewCount: 187, hourlyRate: 1500, image: "/mnt/user-data/uploads/24_08_2022__15_58_05_20260208_082431_0000.jpg", description: "Professional laundry services with care and attention", verified: true, responseTime: "< 1hr", completedJobs: 245 },
-            { id: 2, name: "Joseph Laundry Pro", category: "Household Services", service: "Laundry man", rating: 4.8, reviewCount: 156, hourlyRate: 1500, image: "/mnt/user-data/uploads/24_08_2022__15_48_31_20260208_082443_0000.jpg", description: "Expert laundry and fabric care specialist", verified: true, responseTime: "< 2hr", completedJobs: 198 },
-            { id: 3, name: "Perfect Press", category: "Household Services", service: "Ironing service", rating: 4.7, reviewCount: 134, hourlyRate: 1200, image: "/mnt/user-data/uploads/24_08_2022__16_03_04_20260208_082436_0000.jpg", description: "Crisp ironing for all your garments", verified: true, responseTime: "< 3hr", completedJobs: 167 },
-            { id: 4, name: "Mama Grace", category: "Household Services", service: "House help", rating: 4.9, reviewCount: 203, hourlyRate: 1000, image: "/mnt/user-data/uploads/24_08_2022__17_01_57_20260208_082527_0000.jpg", description: "Reliable household assistance and cleaning", verified: true, responseTime: "< 1hr", completedJobs: 312 },
-            { id: 5, name: "Sparkle Clean", category: "Household Services", service: "Cleaner", rating: 4.8, reviewCount: 189, hourlyRate: 1200, image: "/mnt/user-data/uploads/24_08_2022__15_56_19_20260208_082508_0000.jpg", description: "Thorough home cleaning services", verified: true, responseTime: "< 2hr", completedJobs: 234 },
-            { id: 6, name: "Dish Care Pro", category: "Household Services", service: "Dish washer", rating: 4.6, reviewCount: 98, hourlyRate: 800, image: "/mnt/user-data/uploads/24_08_2022__17_03_16_20260208_082519_0000.jpg", description: "Professional dish washing and kitchen care", verified: false, responseTime: "< 4hr", completedJobs: 123 },
-            
-            // Childcare & Elderly Care
-            { id: 7, name: "Sister Marie", category: "Childcare & Elderly Care", service: "Babysitter", rating: 4.9, reviewCount: 176, hourlyRate: 1500, image: "/mnt/user-data/uploads/24_08_2022__15_56_19_20260208_082508_0000.jpg", description: "Experienced and caring babysitter", verified: true, responseTime: "< 1hr", completedJobs: 289 },
-            { id: 8, name: "Auntie Rose", category: "Childcare & Elderly Care", service: "Nanny", rating: 4.8, reviewCount: 145, hourlyRate: 2000, image: "/mnt/user-data/uploads/24_08_2022__17_03_16_20260208_082519_0000.jpg", description: "Full-time childcare with love and patience", verified: true, responseTime: "< 2hr", completedJobs: 198 },
-            { id: 9, name: "Papa John", category: "Childcare & Elderly Care", service: "Caretaker", rating: 4.7, reviewCount: 112, hourlyRate: 1800, image: "/mnt/user-data/uploads/24_08_2022__16_07_32_20260208_082417_0000.jpg", description: "Dependable property and home caretaker", verified: true, responseTime: "< 3hr", completedJobs: 156 },
-            { id: 10, name: "Elder Care Plus", category: "Childcare & Elderly Care", service: "Elderly care assistant", rating: 4.9, reviewCount: 134, hourlyRate: 2500, image: "/mnt/user-data/uploads/24_08_2022__17_01_57_20260208_082527_0000.jpg", description: "Compassionate elderly care and companionship", verified: true, responseTime: "< 1hr", completedJobs: 201 },
-            
-            // Cooking Services
-            { id: 11, name: "Chef Amina", category: "Cooking Services", service: "Home cook", rating: 4.9, reviewCount: 198, hourlyRate: 2500, image: "/mnt/user-data/uploads/24_08_2022__15_48_31_20260208_082443_0000.jpg", description: "Delicious home-cooked meals daily", verified: true, responseTime: "< 2hr", completedJobs: 267 },
-            { id: 12, name: "Party Chef Pro", category: "Cooking Services", service: "Party cook", rating: 4.8, reviewCount: 156, hourlyRate: 3500, image: "/mnt/user-data/uploads/24_08_2022__16_03_04_20260208_082436_0000.jpg", description: "Professional catering for all events", verified: true, responseTime: "< 1hr", completedJobs: 189 },
-            
-            // Construction & Repairs
-            { id: 13, name: "Master Builder", category: "Construction & Repairs", service: "Mason", rating: 4.8, reviewCount: 167, hourlyRate: 2000, image: "/mnt/user-data/uploads/24_08_2022__16_07_32_20260208_082417_0000.jpg", description: "Quality masonry and construction work", verified: true, responseTime: "< 3hr", completedJobs: 234 },
-            { id: 14, name: "Color Perfect", category: "Construction & Repairs", service: "Painter", rating: 4.7, reviewCount: 145, hourlyRate: 1800, image: "/mnt/user-data/uploads/24_08_2022__17_00_55_20260208_082424_0000.jpg", description: "Professional painting for homes and offices", verified: true, responseTime: "< 2hr", completedJobs: 198 },
-            { id: 15, name: "Wood Masters", category: "Construction & Repairs", service: "Carpenter", rating: 4.9, reviewCount: 178, hourlyRate: 2200, image: "/mnt/user-data/uploads/24_08_2022__16_03_04_20260208_082436_0000.jpg", description: "Custom carpentry and woodwork", verified: true, responseTime: "< 1hr", completedJobs: 256 },
-            { id: 16, name: "Weld Pro", category: "Construction & Repairs", service: "Welder", rating: 4.6, reviewCount: 123, hourlyRate: 2500, image: "/mnt/user-data/uploads/24_08_2022__15_48_31_20260208_082443_0000.jpg", description: "Expert welding and metal fabrication", verified: true, responseTime: "< 4hr", completedJobs: 167 },
-            { id: 17, name: "Ceiling Experts", category: "Construction & Repairs", service: "Ceiling installer", rating: 4.8, reviewCount: 134, hourlyRate: 2000, image: "/mnt/user-data/uploads/24_08_2022__17_00_55_20260208_082424_0000.jpg", description: "Professional ceiling installation", verified: false, responseTime: "< 3hr", completedJobs: 145 },
-            { id: 18, name: "Glass Works", category: "Construction & Repairs", service: "Glass installer", rating: 4.7, reviewCount: 98, hourlyRate: 2200, image: "/mnt/user-data/uploads/24_08_2022__16_07_32_20260208_082417_0000.jpg", description: "Quality glass installation and repair", verified: true, responseTime: "< 2hr", completedJobs: 123 },
-            { id: 19, name: "Furniture Repair Pro", category: "Construction & Repairs", service: "Furniture repairer", rating: 4.8, reviewCount: 156, hourlyRate: 1800, image: "/mnt/user-data/uploads/24_08_2022__15_56_19_20260208_082508_0000.jpg", description: "Expert furniture restoration", verified: true, responseTime: "< 1hr", completedJobs: 189 },
-            { id: 20, name: "Aluminium Craft", category: "Construction & Repairs", service: "Aluminium fabricator", rating: 4.6, reviewCount: 112, hourlyRate: 2500, image: "/mnt/user-data/uploads/24_08_2022__17_01_57_20260208_082527_0000.jpg", description: "Custom aluminium works", verified: false, responseTime: "< 4hr", completedJobs: 134 },
-            
-            // Technical Services
-            { id: 21, name: "Flow Systems", category: "Technical Services", service: "Plumber", rating: 4.9, reviewCount: 203, hourlyRate: 2500, image: "/mnt/user-data/uploads/24_08_2022__16_03_04_20260208_082436_0000.jpg", description: "Expert plumbing solutions", verified: true, responseTime: "< 30min", completedJobs: 378 },
-            { id: 22, name: "Power Solutions", category: "Technical Services", service: "Electrician", rating: 4.9, reviewCount: 189, hourlyRate: 3000, image: "/mnt/user-data/uploads/24_08_2022__15_48_31_20260208_082443_0000.jpg", description: "Licensed electrical services", verified: true, responseTime: "< 1hr", completedJobs: 312 },
-            
-            // Beauty & Personal Care
-            { id: 23, name: "Classic Cuts", category: "Beauty & Personal Care", service: "Barber", rating: 4.8, reviewCount: 234, hourlyRate: 1500, image: "/mnt/user-data/uploads/24_08_2022__16_07_32_20260208_082417_0000.jpg", description: "Professional barbering services", verified: true, responseTime: "< 1hr", completedJobs: 456 },
-            { id: 24, name: "Beauty Touch", category: "Beauty & Personal Care", service: "Hairdresser", rating: 4.9, reviewCount: 198, hourlyRate: 2000, image: "/mnt/user-data/uploads/24_08_2022__17_03_16_20260208_082519_0000.jpg", description: "Expert hair styling and care", verified: true, responseTime: "< 2hr", completedJobs: 378 },
-            { id: 25, name: "Mobile Barber Pro", category: "Beauty & Personal Care", service: "Mobile barber", rating: 4.7, reviewCount: 167, hourlyRate: 2000, image: "/mnt/user-data/uploads/24_08_2022__15_56_19_20260208_082508_0000.jpg", description: "Barbering at your doorstep", verified: true, responseTime: "< 1hr", completedJobs: 234 },
-            { id: 26, name: "Glam Squad", category: "Beauty & Personal Care", service: "Makeup artist", rating: 4.9, reviewCount: 156, hourlyRate: 3500, image: "/mnt/user-data/uploads/24_08_2022__17_01_57_20260208_082527_0000.jpg", description: "Professional makeup for all occasions", verified: true, responseTime: "< 2hr", completedJobs: 289 },
-            { id: 27, name: "Nail Artistry", category: "Beauty & Personal Care", service: "Nail technician", rating: 4.8, reviewCount: 134, hourlyRate: 2500, image: "/mnt/user-data/uploads/24_08_2022__17_00_55_20260208_082424_0000.jpg", description: "Creative nail art and care", verified: true, responseTime: "< 1hr", completedJobs: 198 },
-            
-            // Garden & Outdoor
-            { id: 28, name: "Green Fingers", category: "Garden & Outdoor", service: "Gardener", rating: 4.8, reviewCount: 145, hourlyRate: 1500, image: "/mnt/user-data/uploads/24_08_2022__17_03_16_20260208_082519_0000.jpg", description: "Professional gardening services", verified: true, responseTime: "< 2hr", completedJobs: 234 },
-            { id: 29, name: "Lawn Care Pro", category: "Garden & Outdoor", service: "Lawn mower", rating: 4.7, reviewCount: 123, hourlyRate: 1200, image: "/mnt/user-data/uploads/24_08_2022__16_03_04_20260208_082436_0000.jpg", description: "Expert lawn maintenance", verified: false, responseTime: "< 3hr", completedJobs: 167 },
-            { id: 30, name: "Tree Masters", category: "Garden & Outdoor", service: "Tree trimmer", rating: 4.6, reviewCount: 98, hourlyRate: 2000, image: "/mnt/user-data/uploads/24_08_2022__15_48_31_20260208_082443_0000.jpg", description: "Professional tree trimming", verified: true, responseTime: "< 4hr", completedJobs: 134 },
-            { id: 31, name: "Clean Compound", category: "Garden & Outdoor", service: "Compound cleaner", rating: 4.8, reviewCount: 156, hourlyRate: 1000, image: "/mnt/user-data/uploads/24_08_2022__17_01_57_20260208_082527_0000.jpg", description: "Thorough compound cleaning", verified: true, responseTime: "< 2hr", completedJobs: 189 },
-            { id: 32, name: "Waste Solutions", category: "Garden & Outdoor", service: "Waste collector", rating: 4.7, reviewCount: 112, hourlyRate: 1500, image: "/mnt/user-data/uploads/24_08_2022__16_07_32_20260208_082417_0000.jpg", description: "Reliable waste collection", verified: true, responseTime: "< 1hr", completedJobs: 198 },
-            
-            // Events & Entertainment
-            { id: 33, name: "DJ Maestro", category: "Events & Entertainment", service: "DJ", rating: 4.9, reviewCount: 234, hourlyRate: 5000, image: "/mnt/user-data/uploads/24_08_2022__15_56_19_20260208_082508_0000.jpg", description: "Professional DJ for all events", verified: true, responseTime: "< 1hr", completedJobs: 312 },
-            { id: 34, name: "MC Excellence", category: "Events & Entertainment", service: "MC", rating: 4.8, reviewCount: 198, hourlyRate: 4000, image: "/mnt/user-data/uploads/24_08_2022__17_00_55_20260208_082424_0000.jpg", description: "Engaging event host", verified: true, responseTime: "< 2hr", completedJobs: 267 },
-            { id: 35, name: "Sound Pro", category: "Events & Entertainment", service: "Sound system operator", rating: 4.7, reviewCount: 156, hourlyRate: 3000, image: "/mnt/user-data/uploads/24_08_2022__16_03_04_20260208_082436_0000.jpg", description: "Professional sound system setup", verified: true, responseTime: "< 1hr", completedJobs: 234 },
-            { id: 36, name: "Decor Dreams", category: "Events & Entertainment", service: "Event decorator", rating: 4.9, reviewCount: 178, hourlyRate: 4500, image: "/mnt/user-data/uploads/24_08_2022__17_03_16_20260208_082519_0000.jpg", description: "Creative event decoration", verified: true, responseTime: "< 2hr", completedJobs: 289 },
-            { id: 37, name: "Secure Events", category: "Events & Entertainment", service: "Event security", rating: 4.8, reviewCount: 134, hourlyRate: 2500, image: "/mnt/user-data/uploads/24_08_2022__15_48_31_20260208_082443_0000.jpg", description: "Professional event security", verified: true, responseTime: "< 1hr", completedJobs: 198 },
-            { id: 38, name: "Capture Moments", category: "Events & Entertainment", service: "Photographer", rating: 4.9, reviewCount: 189, hourlyRate: 5000, image: "/mnt/user-data/uploads/24_08_2022__17_01_57_20260208_082527_0000.jpg", description: "Professional photography services", verified: true, responseTime: "< 1hr", completedJobs: 312 },
-            
-            // Transport & Delivery
-            { id: 39, name: "Quick Ride", category: "Transport & Delivery", service: "Motorbike rider", rating: 4.8, reviewCount: 267, hourlyRate: 2000, image: "/mnt/user-data/uploads/24_08_2022__16_07_32_20260208_082417_0000.jpg", description: "Fast and reliable motorbike transport", verified: true, responseTime: "< 15min", completedJobs: 456 },
-            { id: 40, name: "Safe Taxi", category: "Transport & Delivery", service: "Taxi driver", rating: 4.7, reviewCount: 234, hourlyRate: 2500, image: "/mnt/user-data/uploads/24_08_2022__15_56_19_20260208_082508_0000.jpg", description: "Professional taxi services", verified: true, responseTime: "< 30min", completedJobs: 378 },
-            { id: 41, name: "Express Delivery", category: "Transport & Delivery", service: "Delivery rider", rating: 4.9, reviewCount: 198, hourlyRate: 1800, image: "/mnt/user-data/uploads/24_08_2022__17_00_55_20260208_082424_0000.jpg", description: "Fast package delivery", verified: true, responseTime: "< 20min", completedJobs: 512 },
-            { id: 42, name: "Personal Driver Pro", category: "Transport & Delivery", service: "Personal driver", rating: 4.8, reviewCount: 156, hourlyRate: 3000, image: "/mnt/user-data/uploads/24_08_2022__16_03_04_20260208_082436_0000.jpg", description: "Professional personal driving", verified: true, responseTime: "< 1hr", completedJobs: 289 },
-            
-            // Auto Services
-            { id: 43, name: "Shine Auto", category: "Auto Services", service: "Car wash attendant", rating: 4.7, reviewCount: 178, hourlyRate: 1500, image: "/mnt/user-data/uploads/24_08_2022__15_48_31_20260208_082443_0000.jpg", description: "Professional car washing", verified: true, responseTime: "< 1hr", completedJobs: 312 },
-            { id: 44, name: "Tyre Fix Pro", category: "Auto Services", service: "Tyre repairer", rating: 4.8, reviewCount: 145, hourlyRate: 2000, image: "/mnt/user-data/uploads/24_08_2022__17_01_57_20260208_082527_0000.jpg", description: "Expert tyre repair and replacement", verified: true, responseTime: "< 30min", completedJobs: 234 },
-            { id: 45, name: "Auto Clean", category: "Auto Services", service: "Auto cleaner", rating: 4.6, reviewCount: 123, hourlyRate: 1800, image: "/mnt/user-data/uploads/24_08_2022__17_03_16_20260208_082519_0000.jpg", description: "Complete auto cleaning services", verified: false, responseTime: "< 2hr", completedJobs: 189 },
-            
-            // Food Vendors
-            { id: 46, name: "Tasty Treats", category: "Food Vendors", service: "Food vendor", rating: 4.9, reviewCount: 312, hourlyRate: 2500, image: "/mnt/user-data/uploads/24_08_2022__16_07_32_20260208_082417_0000.jpg", description: "Delicious local cuisine", verified: true, responseTime: "< 30min", completedJobs: 567 },
-            { id: 47, name: "Breakfast Queen", category: "Food Vendors", service: "Breakfast seller", rating: 4.8, reviewCount: 234, hourlyRate: 2000, image: "/mnt/user-data/uploads/24_08_2022__15_56_19_20260208_082508_0000.jpg", description: "Fresh breakfast daily", verified: true, responseTime: "< 30min", completedJobs: 456 },
-            { id: 48, name: "Grill Master", category: "Food Vendors", service: "Grill assistant", rating: 4.7, reviewCount: 189, hourlyRate: 1800, image: "/mnt/user-data/uploads/24_08_2022__17_00_55_20260208_082424_0000.jpg", description: "Expert grilling services", verified: true, responseTime: "< 1hr", completedJobs: 312 }
+        // Cities in Cameroon
+        const cities = ['All Cities', 'Yaoundé', 'Douala', 'Bamenda', 'Bafoussam', 'Garoua', 'Maroua', 'Ngaoundéré', 'Bertoua', 'Buea', 'Limbe'];
+
+        const categories = [
+            'All',
+            'Household Services',
+            'Childcare & Elderly Care',
+            'Cooking Services',
+            'Construction & Repairs',
+            'Technical Services',
+            'Beauty & Personal Care',
+            'Garden & Outdoor',
+            'Events & Entertainment',
+            'Transport & Delivery',
+            'Auto Services',
+            'Food Vendors'
+        ];
+
+        const services = [
+            'Laundry woman', 'Laundry man', 'Ironing service', 'Babysitter', 'Nanny', 
+            'House help', 'Home cook', 'Party cook', 'Cleaner', 'Dish washer', 
+            'Caretaker', 'Elderly care assistant', 'Plumber', 'Electrician', 'Welder',
+            'Carpenter', 'Furniture repairer', 'Aluminium fabricator', 'Mason', 'Painter',
+            'Ceiling installer', 'Glass installer', 'Barber', 'Hairdresser', 'Mobile barber',
+            'Makeup artist', 'Nail technician', 'Manicure specialist', 'Pedicure specialist',
+            'DJ', 'MC', 'Sound system operator', 'Event decorator', 'Event security',
+            'Photographer', 'Gardener', 'Lawn mower', 'Tree trimmer', 'Compound cleaner',
+            'Waste collector', 'Motorbike rider', 'Taxi driver', 'Delivery rider',
+            'Personal driver', 'Car wash attendant', 'Tyre repairer', 'Auto cleaner',
+            'Food vendor', 'Breakfast seller', 'Grill assistant'
         ];
 
         function CrunchApp() {
             const [currentView, setCurrentView] = useState('home');
-            const [selectedProvider, setSelectedProvider] = useState(null);
+            const [userType, setUserType] = useState(null); // 'user', 'provider', 'admin'
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [providers, setProviders] = useState([]);
             const [searchTerm, setSearchTerm] = useState('');
             const [selectedCategory, setSelectedCategory] = useState('All');
+            const [selectedCity, setSelectedCity] = useState('All Cities');
+            const [selectedProvider, setSelectedProvider] = useState(null);
+            const [showLoginModal, setShowLoginModal] = useState(false);
+            const [showRegisterModal, setShowRegisterModal] = useState(false);
+            const [showProfileModal, setShowProfileModal] = useState(false);
             const [showBookingModal, setShowBookingModal] = useState(false);
-            const [bookingStep, setBookingStep] = useState(1);
+            const [showPaymentModal, setShowPaymentModal] = useState(false);
+            const [loginType, setLoginType] = useState('user');
+            
             const [bookingData, setBookingData] = useState({
                 date: '',
                 time: '',
                 hours: 2,
                 address: '',
-                notes: ''
+                notes: '',
+                paymentMethod: 'mtn'
             });
-            const [showConfirmation, setShowConfirmation] = useState(false);
 
-            const categories = [
-                'All',
-                'Household Services',
-                'Childcare & Elderly Care',
-                'Cooking Services',
-                'Construction & Repairs',
-                'Technical Services',
-                'Beauty & Personal Care',
-                'Garden & Outdoor',
-                'Events & Entertainment',
-                'Transport & Delivery',
-                'Auto Services',
-                'Food Vendors'
-            ];
+            const [profileData, setProfileData] = useState({
+                name: '',
+                service: services[0],
+                category: categories[1],
+                city: cities[1],
+                phone: '',
+                description: '',
+                hourlyRate: '',
+                image: null
+            });
 
-            const filteredProviders = allProviders.filter(provider => {
+            const filteredProviders = providers.filter(provider => {
                 const matchesSearch = 
                     provider.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     provider.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    provider.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    provider.category.toLowerCase().includes(searchTerm.toLowerCase());
+                    provider.description.toLowerCase().includes(searchTerm.toLowerCase());
                 const matchesCategory = selectedCategory === 'All' || provider.category === selectedCategory;
-                return matchesSearch && matchesCategory;
+                const matchesCity = selectedCity === 'All Cities' || provider.city === selectedCity;
+                return matchesSearch && matchesCategory && matchesCity;
             });
 
-            const viewProvider = (provider) => {
-                setSelectedProvider(provider);
-                setCurrentView('provider');
+            const handleLogin = (type) => {
+                setIsLoggedIn(true);
+                setUserType(type);
+                setShowLoginModal(false);
+                if (type === 'admin') {
+                    setCurrentView('admin');
+                }
             };
 
-            const startBooking = () => {
-                setShowBookingModal(true);
-                setBookingStep(1);
+            const handleCreateProfile = () => {
+                const newProvider = {
+                    ...profileData,
+                    id: Date.now(),
+                    rating: 0,
+                    reviewCount: 0,
+                    verified: false,
+                    responseTime: '< 2hr',
+                    completedJobs: 0,
+                    image: profileData.image || 'https://via.placeholder.com/400x400?text=No+Image'
+                };
+                setProviders([...providers, newProvider]);
+                setShowProfileModal(false);
+                setCurrentView('home');
             };
 
-            const completeBooking = () => {
+            const handleBooking = () => {
                 setShowBookingModal(false);
-                setShowConfirmation(true);
-                setTimeout(() => {
-                    setShowConfirmation(false);
-                    setCurrentView('home');
-                    setSelectedProvider(null);
-                    setBookingData({ date: '', time: '', hours: 2, address: '', notes: '' });
-                }, 3000);
+                setShowPaymentModal(true);
+            };
+
+            const handlePayment = () => {
+                setShowPaymentModal(false);
+                alert('Booking confirmed! Payment instructions sent to your phone.');
+                setCurrentView('home');
+                setBookingData({ date: '', time: '', hours: 2, address: '', notes: '', paymentMethod: 'mtn' });
+            };
+
+            const deleteProvider = (id) => {
+                if (window.confirm('Delete this provider?')) {
+                    setProviders(providers.filter(p => p.id !== id));
+                }
             };
 
             return (
                 <div className="min-h-screen">
                     {/* Header */}
-                    <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md z-50 border-b border-minimal">
+                    <header className="fixed top-0 left-0 right-0 bg-white backdrop-blur-md z-50 border-b border-minimal shadow-sm">
                         <div className="max-w-7xl mx-auto px-6 lg:px-8">
                             <div className="flex justify-between items-center h-20">
                                 <button onClick={() => setCurrentView('home')} className="flex items-center gap-3">
-                                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="CRUNCH" className="w-10 h-10" style={{background: 'linear-gradient(135deg, #FF6B9D 0%, #C239B3 50%, #44107A 100%)', borderRadius: '6px'}} />
-                                    <span className="text-2xl font-light tracking-tight">CRUNCH</span>
+                                    <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAGQAZADASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAECBAYHCAUDCf/EAFAQAAEDAwIDBQQEBw0HAgcAAAEAAgMEBREGIQcSMRNBUWGBCCJxkRQy..." alt="CRUNCH" className="logo-img" />
+                                    <span className="text-2xl font-semibold tracking-tight">CRUNCH</span>
                                 </button>
                                 <nav className="hidden md:flex items-center space-x-8">
-                                    <button className="text-sm tracking-wide hover:opacity-60 transition-opacity">Services</button>
-                                    <button className="text-sm tracking-wide hover:opacity-60 transition-opacity">About</button>
-                                    <button className="text-sm tracking-wide hover:opacity-60 transition-opacity">Contact</button>
+                                    <button onClick={() => setCurrentView('home')} className="text-sm hover:text-gray-600 transition">Browse</button>
+                                    <button onClick={() => setCurrentView('about')} className="text-sm hover:text-gray-600 transition">About</button>
+                                    <button onClick={() => setCurrentView('contact')} className="text-sm hover:text-gray-600 transition">Contact</button>
                                 </nav>
-                                <button className="gradient-bg text-white px-6 py-2.5 text-sm tracking-wide hover:opacity-90 transition-all duration-300 rounded-sm">
-                                    Sign Up
-                                </button>
+                                <div className="flex items-center gap-4">
+                                    {!isLoggedIn ? (
+                                        <>
+                                            <button onClick={() => { setShowLoginModal(true); setLoginType('user'); }} className="text-sm hover:text-gray-600 transition">Sign In</button>
+                                            <button onClick={() => setShowRegisterModal(true)} className="bg-black text-white px-6 py-2.5 text-sm hover:bg-gray-800 transition rounded-md">Join Now</button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {userType === 'provider' && (
+                                                <button onClick={() => setShowProfileModal(true)} className="text-sm hover:text-gray-600 transition">My Profile</button>
+                                            )}
+                                            {userType === 'admin' && (
+                                                <button onClick={() => setCurrentView('admin')} className="text-sm bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">Admin Panel</button>
+                                            )}
+                                            <button onClick={() => { setIsLoggedIn(false); setUserType(null); setCurrentView('home'); }} className="text-sm text-red-600 hover:text-red-700 transition">Logout</button>
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </header>
@@ -276,24 +239,24 @@
                         {currentView === 'home' && (
                             <>
                                 {/* Hero */}
-                                <section className="py-32 px-6 gradient-bg text-white">
+                                <section className="py-24 px-6 bg-white">
                                     <div className="max-w-4xl mx-auto text-center">
-                                        <h1 className="serif text-6xl md:text-7xl font-light mb-6 fade-in-up opacity-0">
-                                            Uber For<br/>Side Hustles
+                                        <h1 className="text-6xl md:text-7xl font-bold mb-6 fade-in-up">
+                                            Uber For Side Hustles
                                         </h1>
-                                        <p className="text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed fade-in-up opacity-0 stagger-2">
+                                        <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
                                             Connect with skilled local professionals for every service you need
                                         </p>
-                                        <div className="max-w-2xl mx-auto fade-in-up opacity-0 stagger-3">
-                                            <div className="flex items-center bg-white rounded-sm overflow-hidden">
+                                        <div className="max-w-2xl mx-auto">
+                                            <div className="flex items-center bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
                                                 <input
                                                     type="text"
-                                                    placeholder="Search for any service or professional..."
-                                                    className="flex-1 px-8 py-5 text-base focus:outline-none bg-transparent text-gray-900"
+                                                    placeholder="Search for any service..."
+                                                    className="flex-1 px-6 py-4 text-base focus:outline-none bg-transparent"
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
                                                 />
-                                                <button className="px-10 py-5 bg-black text-white text-sm tracking-wider hover:bg-gray-800 transition-colors">
+                                                <button className="px-8 py-4 bg-black text-white text-sm font-medium hover:bg-gray-800 transition">
                                                     SEARCH
                                                 </button>
                                             </div>
@@ -301,85 +264,120 @@
                                     </div>
                                 </section>
 
-                                {/* Categories */}
-                                <section className="py-16 px-6 bg-white">
+                                {/* Filters */}
+                                <section className="py-12 px-6 bg-gray-50 border-y">
                                     <div className="max-w-7xl mx-auto">
-                                        <h2 className="text-center text-sm tracking-widest uppercase text-gray-400 mb-8">Browse by Category</h2>
-                                        <div className="flex flex-wrap justify-center gap-3 mb-16">
-                                            {categories.map((category, idx) => (
-                                                <button
-                                                    key={category}
-                                                    onClick={() => setSelectedCategory(category)}
-                                                    className={`tag btn-minimal fade-in opacity-0 ${
-                                                        selectedCategory === category
-                                                            ? 'bg-black text-white'
-                                                            : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                                                    }`}
-                                                    style={{ animationDelay: `${idx * 0.03}s` }}
+                                        {/* City Filter */}
+                                        <div className="mb-8">
+                                            <h3 className="text-sm font-medium text-gray-700 mb-4">Filter by City</h3>
+                                            <div className="flex flex-wrap gap-2">
+                                                {cities.map(city => (
+                                                    <button
+                                                        key={city}
+                                                        onClick={() => setSelectedCity(city)}
+                                                        className={`tag ${
+                                                            selectedCity === city
+                                                                ? 'bg-black text-white'
+                                                                : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                                                        }`}
+                                                    >
+                                                        {city}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Category Filter */}
+                                        <div>
+                                            <h3 className="text-sm font-medium text-gray-700 mb-4">Filter by Category</h3>
+                                            <div className="flex flex-wrap gap-2">
+                                                {categories.map(category => (
+                                                    <button
+                                                        key={category}
+                                                        onClick={() => setSelectedCategory(category)}
+                                                        className={`tag ${
+                                                            selectedCategory === category
+                                                                ? 'bg-black text-white'
+                                                                : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                                                        }`}
+                                                    >
+                                                        {category}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                {/* Providers */}
+                                <section className="py-16 px-6">
+                                    <div className="max-w-7xl mx-auto">
+                                        <div className="flex justify-between items-center mb-8">
+                                            <h2 className="text-2xl font-semibold">
+                                                {filteredProviders.length} {filteredProviders.length === 1 ? 'Professional' : 'Professionals'} Available
+                                            </h2>
+                                            {isLoggedIn && userType === 'provider' && (
+                                                <button 
+                                                    onClick={() => setShowProfileModal(true)}
+                                                    className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800 transition text-sm font-medium"
                                                 >
-                                                    {category}
+                                                    + Create Profile
                                                 </button>
-                                            ))}
+                                            )}
                                         </div>
 
-                                        {/* Results Count */}
-                                        <div className="text-center mb-12">
-                                            <p className="text-gray-600">
-                                                {filteredProviders.length} {filteredProviders.length === 1 ? 'professional' : 'professionals'} available
-                                            </p>
-                                        </div>
-
-                                        {/* Providers Grid */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                            {filteredProviders.map((provider, idx) => (
-                                                <div
-                                                    key={provider.id}
-                                                    onClick={() => viewProvider(provider)}
-                                                    className="card-hover cursor-pointer bg-white border-minimal overflow-hidden fade-in-up opacity-0"
-                                                    style={{ animationDelay: `${idx * 0.05}s` }}
-                                                >
-                                                    <div className="aspect-square overflow-hidden bg-gray-100">
-                                                        <img
-                                                            src={provider.image}
-                                                            alt={provider.name}
-                                                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                                                        />
-                                                    </div>
-                                                    <div className="p-5">
-                                                        <div className="flex items-start justify-between mb-2">
-                                                            <div className="flex-1">
-                                                                <h3 className="font-medium text-base mb-1">{provider.name}</h3>
-                                                                <p className="text-xs tracking-wide text-gray-500 uppercase">{provider.service}</p>
-                                                            </div>
-                                                            {provider.verified && (
-                                                                <span className="tag bg-black text-white text-[9px]">✓</span>
-                                                            )}
-                                                        </div>
-                                                        <p className="text-xs text-gray-600 mb-4 leading-relaxed line-clamp-2">{provider.description}</p>
-                                                        <div className="flex items-center justify-between pt-4 border-t border-minimal">
-                                                            <div className="flex items-baseline gap-1">
-                                                                <span className="text-lg font-medium">{provider.hourlyRate.toLocaleString()}</span>
-                                                                <span className="text-xs text-gray-500">CFA/hr</span>
-                                                            </div>
-                                                            <div className="flex items-center gap-1">
-                                                                <span className="text-xs">★</span>
-                                                                <span className="text-xs font-medium">{provider.rating}</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {filteredProviders.length === 0 && (
-                                            <div className="text-center py-20">
+                                        {filteredProviders.length === 0 ? (
+                                            <div className="text-center py-20 bg-white rounded-lg border border-gray-200">
                                                 <p className="text-gray-500 text-lg mb-4">No professionals found</p>
                                                 <button
-                                                    onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }}
+                                                    onClick={() => { setSearchTerm(''); setSelectedCategory('All'); setSelectedCity('All Cities'); }}
                                                     className="text-sm underline hover:no-underline"
                                                 >
-                                                    Clear filters
+                                                    Clear all filters
                                                 </button>
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                                {filteredProviders.map((provider) => (
+                                                    <div
+                                                        key={provider.id}
+                                                        onClick={() => { setSelectedProvider(provider); setCurrentView('provider'); }}
+                                                        className="card-hover cursor-pointer bg-white border border-gray-200 overflow-hidden rounded-lg"
+                                                    >
+                                                        <div className="aspect-square overflow-hidden bg-gray-100">
+                                                            <img
+                                                                src={provider.image}
+                                                                alt={provider.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                        <div className="p-5">
+                                                            <div className="flex items-start justify-between mb-2">
+                                                                <div>
+                                                                    <h3 className="font-semibold text-base mb-1">{provider.name}</h3>
+                                                                    <p className="text-xs text-gray-500 uppercase">{provider.service}</p>
+                                                                    <p className="text-xs text-gray-400 mt-1">📍 {provider.city}</p>
+                                                                </div>
+                                                                {provider.verified && (
+                                                                    <span className="tag bg-green-100 text-green-700 text-[9px]">✓</span>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-sm text-gray-600 mb-4 line-clamp-2">{provider.description}</p>
+                                                            <div className="flex items-center justify-between pt-4 border-t">
+                                                                <div className="flex items-baseline gap-1">
+                                                                    <span className="text-lg font-semibold">{provider.hourlyRate}</span>
+                                                                    <span className="text-xs text-gray-500">CFA/hr</span>
+                                                                </div>
+                                                                {provider.rating > 0 && (
+                                                                    <div className="flex items-center gap-1">
+                                                                        <span className="text-xs">★</span>
+                                                                        <span className="text-xs font-medium">{provider.rating}</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
                                         )}
                                     </div>
@@ -392,13 +390,13 @@
                                 <div className="max-w-5xl mx-auto">
                                     <button
                                         onClick={() => setCurrentView('home')}
-                                        className="text-sm tracking-wider mb-12 hover:opacity-60 transition-opacity"
+                                        className="text-sm mb-12 hover:opacity-60 transition"
                                     >
-                                        ← BACK TO SEARCH
+                                        ← Back to search
                                     </button>
 
-                                    <div className="grid md:grid-cols-2 gap-12 mb-16">
-                                        <div className="aspect-square bg-gray-100">
+                                    <div className="grid md:grid-cols-2 gap-12">
+                                        <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                                             <img
                                                 src={selectedProvider.image}
                                                 alt={selectedProvider.name}
@@ -406,203 +404,469 @@
                                             />
                                         </div>
                                         <div>
+                                            <h1 className="text-4xl font-bold mb-3">{selectedProvider.name}</h1>
+                                            <p className="text-sm text-gray-500 uppercase mb-2">{selectedProvider.service}</p>
+                                            <p className="text-sm text-gray-400 mb-6">📍 {selectedProvider.city}</p>
+                                            <p className="text-gray-700 mb-8">{selectedProvider.description}</p>
+                                            
+                                            <div className="grid grid-cols-2 gap-4 mb-8 p-6 bg-gray-50 rounded-lg">
+                                                <div>
+                                                    <div className="text-xs text-gray-500 uppercase mb-1">Phone</div>
+                                                    <div className="font-medium">{selectedProvider.phone}</div>
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs text-gray-500 uppercase mb-1">Response</div>
+                                                    <div className="font-medium">{selectedProvider.responseTime}</div>
+                                                </div>
+                                            </div>
+
                                             <div className="mb-8">
-                                                <h1 className="serif text-4xl mb-3">{selectedProvider.name}</h1>
-                                                <p className="text-sm tracking-widest text-gray-500 uppercase mb-2">{selectedProvider.service}</p>
-                                                <p className="text-xs tracking-wide text-gray-400 uppercase mb-6">{selectedProvider.category}</p>
-                                                <p className="text-gray-700 leading-relaxed">{selectedProvider.description}</p>
-                                            </div>
-                                            <div className="grid grid-cols-3 gap-6 py-8 border-y border-minimal mb-8">
-                                                <div>
-                                                    <div className="text-xl font-light mb-1">★ {selectedProvider.rating}</div>
-                                                    <div className="text-[10px] text-gray-500 uppercase tracking-wide">{selectedProvider.reviewCount} Reviews</div>
-                                                </div>
-                                                <div>
-                                                    <div className="text-xl font-light mb-1">{selectedProvider.completedJobs}</div>
-                                                    <div className="text-[10px] text-gray-500 uppercase tracking-wide">Jobs Done</div>
-                                                </div>
-                                                <div>
-                                                    <div className="text-xl font-light mb-1">{selectedProvider.responseTime}</div>
-                                                    <div className="text-[10px] text-gray-500 uppercase tracking-wide">Response</div>
-                                                </div>
-                                            </div>
-                                            <div className="space-y-4">
-                                                <div className="flex items-baseline gap-2 mb-6">
-                                                    <span className="text-3xl font-light">{selectedProvider.hourlyRate.toLocaleString()}</span>
+                                                <div className="flex items-baseline gap-2 mb-2">
+                                                    <span className="text-3xl font-bold">{selectedProvider.hourlyRate}</span>
                                                     <span className="text-gray-500">CFA per hour</span>
                                                 </div>
+                                            </div>
+
+                                            {isLoggedIn && userType === 'user' && (
                                                 <button
-                                                    onClick={startBooking}
-                                                    className="w-full gradient-bg text-white py-4 text-sm tracking-widest hover:opacity-90 transition-opacity"
+                                                    onClick={() => setShowBookingModal(true)}
+                                                    className="w-full bg-black text-white py-4 text-sm font-medium hover:bg-gray-800 transition rounded-md"
                                                 >
                                                     BOOK NOW
                                                 </button>
+                                            )}
+
+                                            {!isLoggedIn && (
+                                                <button
+                                                    onClick={() => { setShowLoginModal(true); setLoginType('user'); }}
+                                                    className="w-full bg-black text-white py-4 text-sm font-medium hover:bg-gray-800 transition rounded-md"
+                                                >
+                                                    SIGN IN TO BOOK
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        )}
+
+                        {currentView === 'admin' && userType === 'admin' && (
+                            <section className="py-20 px-6">
+                                <div className="max-w-7xl mx-auto">
+                                    <h1 className="text-4xl font-bold mb-8">Admin Panel</h1>
+                                    <div className="bg-white rounded-lg border overflow-hidden">
+                                        <table className="w-full">
+                                            <thead className="bg-gray-50 border-b">
+                                                <tr>
+                                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">Provider</th>
+                                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
+                                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">City</th>
+                                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase">Rate</th>
+                                                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y">
+                                                {providers.map(provider => (
+                                                    <tr key={provider.id}>
+                                                        <td className="px-6 py-4">
+                                                            <div className="flex items-center gap-3">
+                                                                <img src={provider.image} className="w-12 h-12 rounded-lg object-cover" />
+                                                                <div>
+                                                                    <div className="font-medium">{provider.name}</div>
+                                                                    <div className="text-xs text-gray-500">{provider.phone}</div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm">{provider.service}</td>
+                                                        <td className="px-6 py-4 text-sm">{provider.city}</td>
+                                                        <td className="px-6 py-4 text-sm font-medium">{provider.hourlyRate} CFA/hr</td>
+                                                        <td className="px-6 py-4 text-right">
+                                                            <button
+                                                                onClick={() => deleteProvider(provider.id)}
+                                                                className="text-red-600 hover:text-red-700 text-sm font-medium"
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        {providers.length === 0 && (
+                                            <div className="text-center py-12 text-gray-500">No providers yet</div>
+                                        )}
+                                    </div>
+                                </div>
+                            </section>
+                        )}
+
+                        {currentView === 'contact' && (
+                            <section className="py-20 px-6">
+                                <div className="max-w-3xl mx-auto text-center">
+                                    <h1 className="text-4xl font-bold mb-8">Contact Us</h1>
+                                    <div className="bg-white rounded-lg border p-12">
+                                        <div className="space-y-6 text-lg">
+                                            <div>
+                                                <div className="text-sm text-gray-500 uppercase mb-2">Email</div>
+                                                <a href="mailto:rikrhahim@gmail.com" className="font-medium hover:underline">rikrhahim@gmail.com</a>
+                                            </div>
+                                            <div>
+                                                <div className="text-sm text-gray-500 uppercase mb-2">Phone</div>
+                                                <a href="tel:+237670791352" className="font-medium hover:underline">+237 670 791 352</a>
+                                            </div>
+                                            <div className="pt-8">
+                                                <div className="text-sm text-gray-500 uppercase mb-4">Follow Us</div>
+                                                <div className="flex justify-center gap-6">
+                                                    <a href="https://twitter.com/crunch" target="_blank" className="text-2xl hover:opacity-60 transition">🐦</a>
+                                                    <a href="https://instagram.com/crunch" target="_blank" className="text-2xl hover:opacity-60 transition">📸</a>
+                                                    <a href="https://wa.me/237670791352" target="_blank" className="text-2xl hover:opacity-60 transition">💬</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </section>
                         )}
+
+                        {currentView === 'about' && (
+                            <section className="py-20 px-6">
+                                <div className="max-w-3xl mx-auto">
+                                    <h1 className="text-4xl font-bold mb-8">About CRUNCH</h1>
+                                    <div className="prose prose-lg">
+                                        <p className="text-xl text-gray-600 mb-6">
+                                            CRUNCH is Cameroon's premier platform connecting people with skilled local professionals for all their service needs.
+                                        </p>
+                                        <p className="text-gray-700 mb-4">
+                                            Whether you need a plumber, a hairdresser, a delivery rider, or any other service professional, CRUNCH makes it easy to find, book, and pay trusted experts in your city.
+                                        </p>
+                                        <p className="text-gray-700">
+                                            We're building the future of work in Africa, one side hustle at a time.
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
+                        )}
                     </div>
 
-                    {/* Booking Modal */}
-                    {showBookingModal && selectedProvider && (
-                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-                            <div className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                                <div className="p-12">
-                                    <div className="flex justify-between items-start mb-12">
-                                        <div>
-                                            <h2 className="serif text-3xl mb-2">Book Service</h2>
-                                            <p className="text-sm text-gray-500">{selectedProvider.name} • {selectedProvider.service}</p>
-                                        </div>
-                                        <button onClick={() => setShowBookingModal(false)} className="text-2xl hover:opacity-60 transition-opacity">
-                                            ×
-                                        </button>
-                                    </div>
-
-                                    {bookingStep === 1 && (
-                                        <div className="space-y-6">
-                                            <div>
-                                                <label className="block text-xs tracking-widest uppercase text-gray-500 mb-3">Date</label>
-                                                <input
-                                                    type="date"
-                                                    className="w-full border-minimal px-6 py-4 focus:outline-none focus:border-black transition-colors"
-                                                    value={bookingData.date}
-                                                    onChange={(e) => setBookingData({...bookingData, date: e.target.value})}
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs tracking-widest uppercase text-gray-500 mb-3">Time</label>
-                                                <input
-                                                    type="time"
-                                                    className="w-full border-minimal px-6 py-4 focus:outline-none focus:border-black transition-colors"
-                                                    value={bookingData.time}
-                                                    onChange={(e) => setBookingData({...bookingData, time: e.target.value})}
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs tracking-widest uppercase text-gray-500 mb-3">Duration (hours)</label>
-                                                <select
-                                                    className="w-full border-minimal px-6 py-4 focus:outline-none focus:border-black transition-colors"
-                                                    value={bookingData.hours}
-                                                    onChange={(e) => setBookingData({...bookingData, hours: parseInt(e.target.value)})}
-                                                >
-                                                    <option value="1">1 hour</option>
-                                                    <option value="2">2 hours</option>
-                                                    <option value="3">3 hours</option>
-                                                    <option value="4">4 hours</option>
-                                                    <option value="5">5 hours</option>
-                                                    <option value="6">6 hours</option>
-                                                    <option value="8">8 hours (full day)</option>
-                                                </select>
-                                            </div>
-                                            <button
-                                                onClick={() => setBookingStep(2)}
-                                                disabled={!bookingData.date || !bookingData.time}
-                                                className="w-full bg-black text-white py-4 text-sm tracking-widest hover:bg-gray-800 transition-colors disabled:bg-gray-200 disabled:text-gray-400"
-                                            >
-                                                CONTINUE
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {bookingStep === 2 && (
-                                        <div className="space-y-6">
-                                            <div>
-                                                <label className="block text-xs tracking-widest uppercase text-gray-500 mb-3">Service Address</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Enter your address"
-                                                    className="w-full border-minimal px-6 py-4 focus:outline-none focus:border-black transition-colors"
-                                                    value={bookingData.address}
-                                                    onChange={(e) => setBookingData({...bookingData, address: e.target.value})}
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs tracking-widest uppercase text-gray-500 mb-3">Additional Notes (Optional)</label>
-                                                <textarea
-                                                    rows="4"
-                                                    placeholder="Any specific requirements..."
-                                                    className="w-full border-minimal px-6 py-4 focus:outline-none focus:border-black transition-colors resize-none"
-                                                    value={bookingData.notes}
-                                                    onChange={(e) => setBookingData({...bookingData, notes: e.target.value})}
-                                                ></textarea>
-                                            </div>
-                                            <div className="border-minimal p-8">
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <span className="text-sm text-gray-600">{selectedProvider.hourlyRate.toLocaleString()} CFA/hr × {bookingData.hours} hours</span>
-                                                    <span className="text-2xl font-light">{(selectedProvider.hourlyRate * bookingData.hours).toLocaleString()} CFA</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex gap-4">
-                                                <button
-                                                    onClick={() => setBookingStep(1)}
-                                                    className="flex-1 border-minimal py-4 text-sm tracking-widest hover:bg-gray-50 transition-colors"
-                                                >
-                                                    BACK
-                                                </button>
-                                                <button
-                                                    onClick={completeBooking}
-                                                    disabled={!bookingData.address}
-                                                    className="flex-1 gradient-bg text-white py-4 text-sm tracking-widest hover:opacity-90 transition-opacity disabled:bg-gray-200 disabled:text-gray-400"
-                                                >
-                                                    CONFIRM BOOKING
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
+                    {/* Login Modal */}
+                    {showLoginModal && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
+                            <div className="bg-white rounded-lg p-8 max-w-md w-full">
+                                <h2 className="text-2xl font-bold mb-6">Sign In</h2>
+                                <div className="space-y-4 mb-6">
+                                    <button
+                                        onClick={() => setLoginType('user')}
+                                        className={`w-full p-4 border rounded-lg text-left ${loginType === 'user' ? 'border-black bg-gray-50' : 'border-gray-200'}`}
+                                    >
+                                        <div className="font-medium">User Account</div>
+                                        <div className="text-sm text-gray-500">Book services</div>
+                                    </button>
+                                    <button
+                                        onClick={() => setLoginType('provider')}
+                                        className={`w-full p-4 border rounded-lg text-left ${loginType === 'provider' ? 'border-black bg-gray-50' : 'border-gray-200'}`}
+                                    >
+                                        <div className="font-medium">Provider Account</div>
+                                        <div className="text-sm text-gray-500">Offer services</div>
+                                    </button>
+                                    <button
+                                        onClick={() => setLoginType('admin')}
+                                        className={`w-full p-4 border rounded-lg text-left ${loginType === 'admin' ? 'border-black bg-gray-50' : 'border-gray-200'}`}
+                                    >
+                                        <div className="font-medium">Admin Account</div>
+                                        <div className="text-sm text-gray-500">Manage platform</div>
+                                    </button>
+                                </div>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setShowLoginModal(false)} className="flex-1 py-3 border border-gray-200 rounded-md hover:bg-gray-50">Cancel</button>
+                                    <button onClick={() => handleLogin(loginType)} className="flex-1 py-3 bg-black text-white rounded-md hover:bg-gray-800">Sign In</button>
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    {/* Confirmation Toast */}
-                    {showConfirmation && (
-                        <div className="fixed bottom-8 right-8 gradient-bg text-white px-8 py-6 z-50 fade-in rounded-sm">
-                            <div className="flex items-center gap-4">
-                                <div className="w-2 h-2 bg-white rounded-full"></div>
-                                <div>
-                                    <div className="font-medium mb-1">Booking Confirmed!</div>
-                                    <div className="text-sm opacity-80">You'll receive a confirmation message shortly</div>
+                    {/* Register Modal */}
+                    {showRegisterModal && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
+                            <div className="bg-white rounded-lg p-8 max-w-md w-full">
+                                <h2 className="text-2xl font-bold mb-6">Join CRUNCH</h2>
+                                <div className="space-y-4 mb-6">
+                                    <button
+                                        onClick={() => { setShowRegisterModal(false); setShowLoginModal(true); setLoginType('user'); }}
+                                        className="w-full p-4 border border-gray-200 rounded-lg text-left hover:border-black"
+                                    >
+                                        <div className="font-medium">Join as User</div>
+                                        <div className="text-sm text-gray-500">Find and book services</div>
+                                    </button>
+                                    <button
+                                        onClick={() => { setShowRegisterModal(false); setShowLoginModal(true); setLoginType('provider'); }}
+                                        className="w-full p-4 border border-gray-200 rounded-lg text-left hover:border-black"
+                                    >
+                                        <div className="font-medium">Join as Provider</div>
+                                        <div className="text-sm text-gray-500">Offer your services and earn</div>
+                                    </button>
+                                </div>
+                                <button onClick={() => setShowRegisterModal(false)} className="w-full py-3 border border-gray-200 rounded-md hover:bg-gray-50">Cancel</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Create Profile Modal */}
+                    {showProfileModal && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6 overflow-y-auto">
+                            <div className="bg-white rounded-lg p-8 max-w-2xl w-full my-8">
+                                <h2 className="text-2xl font-bold mb-6">Create Your Profile</h2>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Name*</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={profileData.name}
+                                            onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Service*</label>
+                                        <select
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={profileData.service}
+                                            onChange={(e) => setProfileData({...profileData, service: e.target.value})}
+                                        >
+                                            {services.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Category*</label>
+                                        <select
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={profileData.category}
+                                            onChange={(e) => setProfileData({...profileData, category: e.target.value})}
+                                        >
+                                            {categories.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">City*</label>
+                                        <select
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={profileData.city}
+                                            onChange={(e) => setProfileData({...profileData, city: e.target.value})}
+                                        >
+                                            {cities.filter(c => c !== 'All Cities').map(c => <option key={c} value={c}>{c}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Phone*</label>
+                                        <input
+                                            type="tel"
+                                            placeholder="+237..."
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={profileData.phone}
+                                            onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Hourly Rate (CFA)*</label>
+                                        <input
+                                            type="number"
+                                            placeholder="e.g. 2000"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={profileData.hourlyRate}
+                                            onChange={(e) => setProfileData({...profileData, hourlyRate: e.target.value})}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Description*</label>
+                                        <textarea
+                                            rows="3"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={profileData.description}
+                                            onChange={(e) => setProfileData({...profileData, description: e.target.value})}
+                                        ></textarea>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Profile Image URL (optional)</label>
+                                        <input
+                                            type="text"
+                                            placeholder="https://..."
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={profileData.image}
+                                            onChange={(e) => setProfileData({...profileData, image: e.target.value})}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex gap-3 mt-6">
+                                    <button onClick={() => setShowProfileModal(false)} className="flex-1 py-3 border border-gray-200 rounded-md hover:bg-gray-50">Cancel</button>
+                                    <button
+                                        onClick={handleCreateProfile}
+                                        disabled={!profileData.name || !profileData.phone || !profileData.hourlyRate || !profileData.description}
+                                        className="flex-1 py-3 bg-black text-white rounded-md hover:bg-gray-800 disabled:bg-gray-300"
+                                    >
+                                        Create Profile
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Booking Modal */}
+                    {showBookingModal && selectedProvider && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
+                            <div className="bg-white rounded-lg p-8 max-w-2xl w-full">
+                                <h2 className="text-2xl font-bold mb-6">Book Service</h2>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Date</label>
+                                        <input
+                                            type="date"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={bookingData.date}
+                                            onChange={(e) => setBookingData({...bookingData, date: e.target.value})}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Time</label>
+                                        <input
+                                            type="time"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={bookingData.time}
+                                            onChange={(e) => setBookingData({...bookingData, time: e.target.value})}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Duration (hours)</label>
+                                        <select
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={bookingData.hours}
+                                            onChange={(e) => setBookingData({...bookingData, hours: parseInt(e.target.value)})}
+                                        >
+                                            {[1,2,3,4,5,6,8].map(h => <option key={h} value={h}>{h} hour{h > 1 ? 's' : ''}</option>)}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Your Address</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={bookingData.address}
+                                            onChange={(e) => setBookingData({...bookingData, address: e.target.value})}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-2">Notes (optional)</label>
+                                        <textarea
+                                            rows="3"
+                                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            value={bookingData.notes}
+                                            onChange={(e) => setBookingData({...bookingData, notes: e.target.value})}
+                                        ></textarea>
+                                    </div>
+                                    <div className="bg-gray-50 p-4 rounded-lg">
+                                        <div className="flex justify-between mb-2">
+                                            <span>Total</span>
+                                            <span className="text-xl font-bold">{selectedProvider.hourlyRate * bookingData.hours} CFA</span>
+                                        </div>
+                                        <div className="text-sm text-gray-500">{selectedProvider.hourlyRate} CFA/hr × {bookingData.hours} hours</div>
+                                    </div>
+                                </div>
+                                <div className="flex gap-3 mt-6">
+                                    <button onClick={() => setShowBookingModal(false)} className="flex-1 py-3 border border-gray-200 rounded-md hover:bg-gray-50">Cancel</button>
+                                    <button
+                                        onClick={handleBooking}
+                                        disabled={!bookingData.date || !bookingData.time || !bookingData.address}
+                                        className="flex-1 py-3 bg-black text-white rounded-md hover:bg-gray-800 disabled:bg-gray-300"
+                                    >
+                                        Proceed to Payment
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Payment Modal */}
+                    {showPaymentModal && selectedProvider && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
+                            <div className="bg-white rounded-lg p-8 max-w-md w-full">
+                                <h2 className="text-2xl font-bold mb-6">Payment</h2>
+                                <div className="mb-6">
+                                    <div className="text-center mb-4">
+                                        <div className="text-3xl font-bold mb-2">{selectedProvider.hourlyRate * bookingData.hours} CFA</div>
+                                        <div className="text-sm text-gray-500">Total Amount</div>
+                                    </div>
+                                </div>
+                                <div className="space-y-3 mb-6">
+                                    <button
+                                        onClick={() => setBookingData({...bookingData, paymentMethod: 'mtn'})}
+                                        className={`w-full p-4 border rounded-lg text-left flex items-center gap-3 ${bookingData.paymentMethod === 'mtn' ? 'border-black bg-yellow-50' : 'border-gray-200'}`}
+                                    >
+                                        <div className="w-12 h-12 bg-yellow-400 rounded-lg flex items-center justify-center font-bold">MTN</div>
+                                        <div>
+                                            <div className="font-medium">MTN Mobile Money</div>
+                                            <div className="text-sm text-gray-500">Pay with MTN MoMo</div>
+                                        </div>
+                                    </button>
+                                    <button
+                                        onClick={() => setBookingData({...bookingData, paymentMethod: 'orange'})}
+                                        className={`w-full p-4 border rounded-lg text-left flex items-center gap-3 ${bookingData.paymentMethod === 'orange' ? 'border-black bg-orange-50' : 'border-gray-200'}`}
+                                    >
+                                        <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center font-bold text-white">OM</div>
+                                        <div>
+                                            <div className="font-medium">Orange Money</div>
+                                            <div className="text-sm text-gray-500">Pay with Orange Money</div>
+                                        </div>
+                                    </button>
+                                    <button
+                                        onClick={() => setBookingData({...bookingData, paymentMethod: 'kwikpay'})}
+                                        className={`w-full p-4 border rounded-lg text-left flex items-center gap-3 ${bookingData.paymentMethod === 'kwikpay' ? 'border-black bg-blue-50' : 'border-gray-200'}`}
+                                    >
+                                        <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white">KP</div>
+                                        <div>
+                                            <div className="font-medium">KwikPay</div>
+                                            <div className="text-sm text-gray-500">Pay with KwikPay</div>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setShowPaymentModal(false)} className="flex-1 py-3 border border-gray-200 rounded-md hover:bg-gray-50">Cancel</button>
+                                    <button onClick={handlePayment} className="flex-1 py-3 bg-black text-white rounded-md hover:bg-gray-800">Confirm Payment</button>
                                 </div>
                             </div>
                         </div>
                     )}
 
                     {/* Footer */}
-                    <footer className="bg-white border-t border-minimal py-16 px-6">
+                    <footer className="bg-white border-t py-12 px-6">
                         <div className="max-w-7xl mx-auto">
-                            <div className="grid md:grid-cols-4 gap-12 mb-12">
+                            <div className="grid md:grid-cols-4 gap-8 mb-8">
                                 <div className="md:col-span-2">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 gradient-bg rounded-md"></div>
-                                        <div className="text-2xl font-light">CRUNCH</div>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAGQAZADASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAECBAYHCAUDCf/EAFAQAAEDAwIDBQQEBw0HAgcAAAEAAgMEBREGIQcSMRNBUWGBCCJxkRQy..." alt="CRUNCH" className="w-10 h-10" />
+                                        <div className="text-xl font-semibold">CRUNCH</div>
                                     </div>
-                                    <p className="text-sm text-gray-600 leading-relaxed max-w-sm mb-4">
-                                        Connecting skilled professionals with people who need their services.
-                                    </p>
-                                    <p className="text-xs text-gray-400">Uber For Side Hustles</p>
-                                </div>
-                                <div>
-                                    <div className="text-xs tracking-widest uppercase text-gray-400 mb-6">Quick Links</div>
-                                    <div className="space-y-3 text-sm">
-                                        <div className="hover:opacity-60 transition-opacity cursor-pointer">About Us</div>
-                                        <div className="hover:opacity-60 transition-opacity cursor-pointer">How It Works</div>
-                                        <div className="hover:opacity-60 transition-opacity cursor-pointer">Become a Pro</div>
-                                        <div className="hover:opacity-60 transition-opacity cursor-pointer">Support</div>
+                                    <p className="text-sm text-gray-600 mb-4">Uber For Side Hustles</p>
+                                    <div className="flex gap-4">
+                                        <a href="https://twitter.com/crunch" target="_blank" className="text-gray-600 hover:text-black">Twitter</a>
+                                        <a href="https://instagram.com/crunch" target="_blank" className="text-gray-600 hover:text-black">Instagram</a>
+                                        <a href="https://wa.me/237670791352" target="_blank" className="text-gray-600 hover:text-black">WhatsApp</a>
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="text-xs tracking-widest uppercase text-gray-400 mb-6">Contact</div>
-                                    <div className="space-y-3 text-sm">
-                                        <div className="hover:opacity-60 transition-opacity cursor-pointer">Email Us</div>
-                                        <div className="hover:opacity-60 transition-opacity cursor-pointer">Call Us</div>
-                                        <div className="hover:opacity-60 transition-opacity cursor-pointer">WhatsApp</div>
+                                    <div className="text-xs font-medium uppercase text-gray-500 mb-4">Company</div>
+                                    <div className="space-y-2 text-sm">
+                                        <div><button onClick={() => setCurrentView('about')} className="hover:underline">About</button></div>
+                                        <div><button onClick={() => setCurrentView('contact')} className="hover:underline">Contact</button></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-xs font-medium uppercase text-gray-500 mb-4">Contact</div>
+                                    <div className="space-y-2 text-sm">
+                                        <div><a href="mailto:rikrhahim@gmail.com" className="hover:underline">Email Us</a></div>
+                                        <div><a href="tel:+237670791352" className="hover:underline">+237 670 791 352</a></div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="pt-8 border-t border-minimal text-center">
-                                <p className="text-xs text-gray-400 tracking-wider">© 2026 CRUNCH. All rights reserved.</p>
+                            <div className="pt-8 border-t text-center text-sm text-gray-500">
+                                © 2026 CRUNCH. All rights reserved.
                             </div>
                         </div>
                     </footer>
