@@ -8,6 +8,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -129,6 +130,208 @@
             color: white;
             transform: scale(1.1);
         }
+
+        /* NEW FEATURES: Dark Mode */
+        [data-theme="dark"] {
+            background: #1a1a1a;
+            color: #f3f4f6;
+        }
+        [data-theme="dark"] .bg-white { background: #2d2d2d !important; }
+        [data-theme="dark"] .text-gray-600 { color: #9ca3af !important; }
+        [data-theme="dark"] .border-minimal { border-color: #404040 !important; }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .theme-toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .theme-toggle.active .theme-toggle-slider {
+            transform: translateX(30px);
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 9999;
+        }
+        .toast.show { transform: translateX(0); }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #000;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 40;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .back-to-top.visible { opacity: 1; transform: translateY(0); }
+        .back-to-top:hover { transform: translateY(-4px); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 24px;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Mobile Bottom Nav */
+        .mobile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 8px 0;
+            z-index: 50;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+        @media (min-width: 768px) {
+            .mobile-bottom-nav { display: none; }
+        }
+
+        /* Level Badge */
+        .level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .level-bronze { background: #cd7f32; color: white; }
+        .level-silver { background: #c0c0c0; color: #000; }
+        .level-gold { background: #ffd700; color: #000; }
+
+        /* Message Bubbles */
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 8px;
+        }
+        .message-sent { background: #000; color: white; margin-left: auto; }
+        .message-received { background: #f3f4f6; color: #1a1a1a; }
+
+        /* Star Rating */
+        .star-rating { display: inline-flex; gap: 2px; }
+        .star { cursor: pointer; font-size: 20px; transition: all 0.2s; color: #d1d5db; }
+        .star.filled { color: #fbbf24; }
+        .star:hover { transform: scale(1.2); }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 999px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Scale In Animation */
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .scale-in { animation: scaleIn 0.4s ease-out; }
+
+        /* Quick Actions */
+        .quick-actions {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+        }
+        .card-hover:hover .quick-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -170,8 +373,9 @@
         ];
 
         function CrunchApp() {
+            // Existing state
             const [currentView, setCurrentView] = useState('home');
-            const [userType, setUserType] = useState(null); // 'user', 'provider', 'admin'
+            const [userType, setUserType] = useState(null);
             const [isLoggedIn, setIsLoggedIn] = useState(false);
             const [providers, setProviders] = useState([]);
             const [searchTerm, setSearchTerm] = useState('');
@@ -204,6 +408,142 @@
                 hourlyRate: '',
                 image: null
             });
+
+            // NEW: Additional state for all features
+            const [theme, setTheme] = useState('light');
+            const [loading, setLoading] = useState(false);
+            const [savedProviders, setSavedProviders] = useState([]);
+            const [compareList, setCompareList] = useState([]);
+            const [showComparison, setShowComparison] = useState(false);
+            const [showBackToTop, setShowBackToTop] = useState(false);
+            const [userLevel, setUserLevel] = useState('bronze');
+            const [userPoints, setUserPoints] = useState(0);
+            const [notifications, setNotifications] = useState([]);
+            const [showMessagingModal, setShowMessagingModal] = useState(false);
+            const [showReviewModal, setShowReviewModal] = useState(false);
+            const [showCalendarModal, setShowCalendarModal] = useState(false);
+            const [messages, setMessages] = useState([]);
+            const [newMessage, setNewMessage] = useState('');
+            const [rating, setRating] = useState(0);
+            const [reviewText, setReviewText] = useState('');
+            const [stats, setStats] = useState({ professionals: 0, cities: 0, jobs: 0 });
+
+            // Effects
+            useEffect(() => {
+                // Dark mode
+                const savedTheme = localStorage.getItem('crunch_theme') || 'light';
+                setTheme(savedTheme);
+                document.documentElement.setAttribute('data-theme', savedTheme);
+
+                // Stats counter animation
+                let count = 0;
+                const interval = setInterval(() => {
+                    count += 13;
+                    if (count >= 500) {
+                        setStats({ professionals: 500, cities: 10, jobs: 1000 });
+                        clearInterval(interval);
+                    } else {
+                        setStats({ 
+                            professionals: count, 
+                            cities: Math.floor(count / 50), 
+                            jobs: count * 2 
+                        });
+                    }
+                }, 50);
+
+                // Scroll listener for back to top
+                const handleScroll = () => setShowBackToTop(window.scrollY > 500);
+                window.addEventListener('scroll', handleScroll);
+
+                return () => {
+                    clearInterval(interval);
+                    window.removeEventListener('scroll', handleScroll);
+                };
+            }, []);
+
+            // Utility functions
+            const showToast = (message, type = 'success') => {
+                const toast = document.createElement('div');
+                toast.className = 'toast show';
+                toast.innerHTML = `
+                    <span style="font-size: 20px">${type === 'success' ? '✓' : '✕'}</span>
+                    <span>${message}</span>
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            };
+
+            const toggleTheme = () => {
+                const newTheme = theme === 'light' ? 'dark' : 'light';
+                setTheme(newTheme);
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('crunch_theme', newTheme);
+            };
+
+            const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const toggleSave = (providerId) => {
+                if (savedProviders.includes(providerId)) {
+                    setSavedProviders(savedProviders.filter(id => id !== providerId));
+                    showToast('Removed from favorites');
+                } else {
+                    setSavedProviders([...savedProviders, providerId]);
+                    showToast('Added to favorites');
+                }
+            };
+
+            const toggleCompare = (provider) => {
+                if (compareList.find(p => p.id === provider.id)) {
+                    setCompareList(compareList.filter(p => p.id !== provider.id));
+                } else if (compareList.length < 3) {
+                    setCompareList([...compareList, provider]);
+                } else {
+                    showToast('Maximum 3 providers', 'error');
+                }
+            };
+
+            const sendMessage = () => {
+                if (newMessage.trim()) {
+                    setMessages([...messages, { text: newMessage, sent: true, time: new Date().toLocaleTimeString() }]);
+                    setNewMessage('');
+                    setTimeout(() => {
+                        setMessages(prev => [...prev, { 
+                            text: "Thank you! I'll get back to you soon.", 
+                            sent: false, 
+                            time: new Date().toLocaleTimeString() 
+                        }]);
+                    }, 2000);
+                }
+            };
+
+            const submitReview = () => {
+                if (rating > 0 && reviewText.trim()) {
+                    const updatedProviders = providers.map(p => {
+                        if (p.id === selectedProvider.id) {
+                            const newReviews = [...(p.reviews || []), { 
+                                rating, 
+                                text: reviewText, 
+                                date: new Date().toLocaleDateString(), 
+                                user: 'You' 
+                            }];
+                            const avgRating = newReviews.reduce((sum, r) => sum + r.rating, 0) / newReviews.length;
+                            return { ...p, reviews: newReviews, rating: avgRating, reviewCount: newReviews.length };
+                        }
+                        return p;
+                    });
+                    setProviders(updatedProviders);
+                    setShowReviewModal(false);
+                    setRating(0);
+                    setReviewText('');
+                    showToast('Review submitted!');
+                    setUserPoints(userPoints + 25);
+                }
+            };
+
+            const featuredProviders = providers.filter(p => p.featured).slice(0, 3);
 
             const filteredProviders = providers.filter(provider => {
                 const matchesSearch = 
@@ -247,9 +587,23 @@
 
             const handlePayment = () => {
                 setShowPaymentModal(false);
-                alert('Booking confirmed! Payment instructions sent to your phone.');
-                setCurrentView('home');
-                setBookingData({ date: '', time: '', hours: 2, address: '', notes: '', paymentMethod: 'mtn' });
+                showToast(`Payment request sent to ${bookingData.phoneNumber || 'your phone'}`);
+                // Confetti effect
+                if (typeof confetti !== 'undefined') {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }
+                setShowCalendarModal(true);
+                setUserPoints(userPoints + 50);
+                // Add notification
+                if (selectedProvider) {
+                    const newNotif = {
+                        id: Date.now(),
+                        text: `Booking confirmed with ${selectedProvider.name}`,
+                        time: new Date().toLocaleTimeString(),
+                        read: false
+                    };
+                    setNotifications([newNotif, ...notifications]);
+                }
             };
 
             const deleteProvider = (id) => {
@@ -276,6 +630,31 @@
                                     <button onClick={() => setCurrentView('contact')} className="text-sm hover:text-gray-600 transition">Contact</button>
                                 </nav>
                                 <div className="flex items-center gap-4">
+                                    {/* Dark Mode Toggle */}
+                                    <div className={`theme-toggle ${theme === 'dark' ? 'active' : ''}`} onClick={toggleTheme} title="Toggle Dark Mode">
+                                        <div className="theme-toggle-slider"></div>
+                                    </div>
+
+                                    {/* Notifications (when logged in) */}
+                                    {isLoggedIn && (
+                                        <button 
+                                            className="relative p-2 hover:bg-gray-100 rounded-lg transition"
+                                            title="Notifications"
+                                        >
+                                            <span className="text-xl">🔔</span>
+                                            {notifications.filter(n => !n.read).length > 0 && (
+                                                <span className="notification-badge">{notifications.filter(n => !n.read).length}</span>
+                                            )}
+                                        </button>
+                                    )}
+
+                                    {/* User Level Badge (when logged in) */}
+                                    {isLoggedIn && (
+                                        <div className={`level-badge level-${userLevel}`} title="Your Level">
+                                            {userLevel.toUpperCase()} • {userPoints} pts
+                                        </div>
+                                    )}
+
                                     {!isLoggedIn ? (
                                         <>
                                             <button onClick={() => { setShowLoginModal(true); setLoginType('user'); }} className="text-sm hover:text-gray-600 transition">Sign In</button>
@@ -427,17 +806,41 @@
                                             <h2 className="text-2xl font-semibold">
                                                 {filteredProviders.length} {filteredProviders.length === 1 ? 'Professional' : 'Professionals'} Available
                                             </h2>
-                                            {isLoggedIn && userType === 'provider' && (
-                                                <button 
-                                                    onClick={() => setShowProfileModal(true)}
-                                                    className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800 transition text-sm font-medium"
-                                                >
-                                                    + Create Profile
-                                                </button>
-                                            )}
+                                            <div className="flex gap-3">
+                                                {compareList.length > 1 && (
+                                                    <button 
+                                                        onClick={() => setShowComparison(true)}
+                                                        className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition text-sm font-medium"
+                                                    >
+                                                        ⚖️ Compare ({compareList.length})
+                                                    </button>
+                                                )}
+                                                {isLoggedIn && userType === 'provider' && (
+                                                    <button 
+                                                        onClick={() => setShowProfileModal(true)}
+                                                        className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800 transition text-sm font-medium"
+                                                    >
+                                                        + Create Profile
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
 
-                                        {filteredProviders.length === 0 ? (
+                                        {loading ? (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                                {[1,2,3,4,5,6,7,8].map(i => (
+                                                    <div key={i} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                                                        <div className="aspect-square skeleton"></div>
+                                                        <div className="p-5 space-y-3">
+                                                            <div className="skeleton h-4 w-3/4 rounded"></div>
+                                                            <div className="skeleton h-3 w-1/2 rounded"></div>
+                                                            <div className="skeleton h-16 w-full rounded"></div>
+                                                            <div className="skeleton h-8 w-full rounded"></div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : filteredProviders.length === 0 ? (
                                             <div className="text-center py-20 bg-white rounded-lg border border-gray-200">
                                                 <p className="text-gray-500 text-lg mb-4">No professionals found</p>
                                                 <button
@@ -464,14 +867,23 @@
                                                         </div>
                                                         <div className="p-5">
                                                             <div className="flex items-start justify-between mb-2">
-                                                                <div>
+                                                                <div className="flex-1">
                                                                     <h3 className="font-semibold text-base mb-1">{provider.name}</h3>
                                                                     <p className="text-xs text-gray-500 uppercase">{provider.service}</p>
                                                                     <p className="text-xs text-gray-400 mt-1">📍 {provider.city}</p>
                                                                 </div>
-                                                                {provider.verified && (
-                                                                    <span className="tag bg-green-100 text-green-700 text-[9px]">✓</span>
-                                                                )}
+                                                                <div className="flex items-start gap-2">
+                                                                    {provider.verified && (
+                                                                        <span className="tag bg-green-100 text-green-700 text-[9px]">✓</span>
+                                                                    )}
+                                                                    <button 
+                                                                        onClick={(e) => { e.stopPropagation(); toggleSave(provider.id); }}
+                                                                        className="text-xl hover:scale-110 transition"
+                                                                        title={savedProviders.includes(provider.id) ? 'Remove from favorites' : 'Add to favorites'}
+                                                                    >
+                                                                        {savedProviders.includes(provider.id) ? '❤️' : '🤍'}
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                             <p className="text-sm text-gray-600 mb-4 line-clamp-2">{provider.description}</p>
                                                             <div className="flex items-center justify-between pt-4 border-t">
@@ -482,9 +894,19 @@
                                                                 {provider.rating > 0 && (
                                                                     <div className="flex items-center gap-1">
                                                                         <span className="text-xs">★</span>
-                                                                        <span className="text-xs font-medium">{provider.rating}</span>
+                                                                        <span className="text-xs font-medium">{provider.rating.toFixed(1)}</span>
+                                                                        <span className="text-xs text-gray-400">({provider.reviewCount || 0})</span>
                                                                     </div>
                                                                 )}
+                                                            </div>
+                                                            {/* Quick Actions on Hover */}
+                                                            <div className="quick-actions mt-3 flex gap-2">
+                                                                <button 
+                                                                    onClick={(e) => { e.stopPropagation(); toggleCompare(provider); }}
+                                                                    className={`flex-1 text-xs py-2 px-3 rounded ${compareList.find(p => p.id === provider.id) ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+                                                                >
+                                                                    {compareList.find(p => p.id === provider.id) ? '✓ Comparing' : '⚖️ Compare'}
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1001,6 +1423,196 @@
                             </div>
                         </div>
                     </footer>
+
+                    {/* Back to Top Button */}
+                    <button 
+                        className={`back-to-top ${showBackToTop ? 'visible' : ''}`} 
+                        onClick={scrollToTop}
+                        title="Back to top"
+                    >
+                        ↑
+                    </button>
+
+                    {/* Mobile Bottom Navigation */}
+                    <div className="mobile-bottom-nav">
+                        <button onClick={() => setCurrentView('home')} className="flex flex-col items-center gap-1 py-2">
+                            <span className="text-xl">🏠</span>
+                            <span className="text-xs">Home</span>
+                        </button>
+                        <button className="flex flex-col items-center gap-1 py-2">
+                            <span className="text-xl">🔍</span>
+                            <span className="text-xs">Search</span>
+                        </button>
+                        <button className="flex flex-col items-center gap-1 py-2">
+                            <span className="text-xl">❤️</span>
+                            <span className="text-xs">Saved</span>
+                        </button>
+                        <button className="flex flex-col items-center gap-1 py-2">
+                            <span className="text-xl">👤</span>
+                            <span className="text-xs">Profile</span>
+                        </button>
+                    </div>
+                    {/* Messaging Modal */}
+                    {showMessagingModal && selectedProvider && (
+                        <div className="modal-overlay" onClick={() => setShowMessagingModal(false)}>
+                            <div className="modal-content p-6" onClick={e => e.stopPropagation()}>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-xl font-bold">Chat with {selectedProvider.name}</h2>
+                                    <button onClick={() => setShowMessagingModal(false)} className="text-2xl hover:opacity-60">×</button>
+                                </div>
+                                <div className="h-96 flex flex-col">
+                                    <div className="flex-1 overflow-y-auto mb-4 space-y-2">
+                                        {messages.length === 0 ? (
+                                            <div className="text-center text-gray-500 text-sm mt-20">Start a conversation!</div>
+                                        ) : (
+                                            messages.map((msg, idx) => (
+                                                <div key={idx} className={`flex ${msg.sent ? 'justify-end' : 'justify-start'}`}>
+                                                    <div className={`message-bubble ${msg.sent ? 'message-sent' : 'message-received'}`}>
+                                                        <div className="text-sm">{msg.text}</div>
+                                                        <div className={`text-xs mt-1 ${msg.sent ? 'opacity-70' : 'opacity-50'}`}>{msg.time}</div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Type a message..."
+                                            className="flex-1 px-4 py-3 border border-gray-200 rounded-lg"
+                                            value={newMessage}
+                                            onChange={(e) => setNewMessage(e.target.value)}
+                                            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                                        />
+                                        <button onClick={sendMessage} className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Review Modal */}
+                    {showReviewModal && selectedProvider && (
+                        <div className="modal-overlay" onClick={() => setShowReviewModal(false)}>
+                            <div className="modal-content p-8" onClick={e => e.stopPropagation()}>
+                                <h2 className="text-2xl font-bold mb-6">Leave a Review</h2>
+                                <div className="space-y-4">
+                                    <div className="text-center">
+                                        <div className="text-sm font-medium mb-3">Rating</div>
+                                        <div className="star-rating justify-center mb-4">
+                                            {[1,2,3,4,5].map(star => (
+                                                <span 
+                                                    key={star} 
+                                                    className={`star ${star <= rating ? 'filled' : ''}`} 
+                                                    onClick={() => setRating(star)}
+                                                >
+                                                    ★
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <textarea 
+                                        rows="4" 
+                                        placeholder="Share your experience..." 
+                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg" 
+                                        value={reviewText} 
+                                        onChange={(e) => setReviewText(e.target.value)}
+                                    ></textarea>
+                                    <div className="flex gap-3">
+                                        <button onClick={() => setShowReviewModal(false)} className="flex-1 py-3 border border-gray-200 rounded-md hover:bg-gray-50">Cancel</button>
+                                        <button onClick={submitReview} disabled={rating === 0 || !reviewText.trim()} className="flex-1 py-3 bg-black text-white rounded-md hover:bg-gray-800 disabled:bg-gray-300">Submit Review</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Calendar/Booking Confirmation Modal */}
+                    {showCalendarModal && selectedProvider && (
+                        <div className="modal-overlay" onClick={() => setShowCalendarModal(false)}>
+                            <div className="modal-content p-8 text-center" onClick={e => e.stopPropagation()}>
+                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span className="text-3xl">✓</span>
+                                </div>
+                                <h2 className="text-2xl font-bold mb-4">Booking Confirmed!</h2>
+                                <div className="bg-gray-50 rounded-lg p-6 mb-6 text-left">
+                                    <div className="text-sm text-gray-500 mb-4">📅 Booking Details</div>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">Provider:</span>
+                                            <span className="font-medium">{selectedProvider.name}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">Date:</span>
+                                            <span className="font-medium">{bookingData.date || 'TBD'}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-600">Time:</span>
+                                            <span className="font-medium">{bookingData.time || 'TBD'}</span>
+                                        </div>
+                                        <div className="flex justify-between pt-2 border-t">
+                                            <span className="text-gray-600">Total:</span>
+                                            <span className="font-bold">{selectedProvider.hourlyRate * bookingData.hours} CFA</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-600 mb-6">
+                                    Confirmation sent to your phone. The provider will contact you shortly.
+                                </p>
+                                <button onClick={() => { setShowCalendarModal(false); setCurrentView('home'); }} className="w-full py-3 bg-black text-white rounded-md hover:bg-gray-800">Done</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Comparison Modal */}
+                    {showComparison && compareList.length > 1 && (
+                        <div className="modal-overlay" onClick={() => setShowComparison(false)}>
+                            <div className="modal-content p-8" onClick={e => e.stopPropagation()}>
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-2xl font-bold">Compare Providers</h2>
+                                    <button onClick={() => setShowComparison(false)} className="text-2xl hover:opacity-60">×</button>
+                                </div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="border-b">
+                                                <th className="text-left p-3">Feature</th>
+                                                {compareList.map(p => (
+                                                    <th key={p.id} className="p-3 text-center">{p.name}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr className="border-b">
+                                                <td className="p-3 font-medium">Rate</td>
+                                                {compareList.map(p => (
+                                                    <td key={p.id} className="p-3 text-center">{p.hourlyRate} CFA/hr</td>
+                                                ))}
+                                            </tr>
+                                            <tr className="border-b">
+                                                <td className="p-3 font-medium">Rating</td>
+                                                {compareList.map(p => (
+                                                    <td key={p.id} className="p-3 text-center">{p.rating > 0 ? `${p.rating.toFixed(1)} ⭐` : 'New'}</td>
+                                                ))}
+                                            </tr>
+                                            <tr className="border-b">
+                                                <td className="p-3 font-medium">City</td>
+                                                {compareList.map(p => (
+                                                    <td key={p.id} className="p-3 text-center">{p.city}</td>
+                                                ))}
+                                            </tr>
+                                            <tr>
+                                                <td className="p-3 font-medium">Service</td>
+                                                {compareList.map(p => (
+                                                    <td key={p.id} className="p-3 text-center text-xs">{p.service}</td>
+                                                ))}
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         }
