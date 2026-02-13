@@ -69,6 +69,7 @@
             object-fit: contain;
         }
 
+        /* NEW: How It Works Section Styles */
         .how-it-works-step {
             text-align: center;
             transition: transform 0.3s ease;
@@ -109,19 +110,7 @@
             color: #FF6B9D;
         }
         
-        .payment-logo {
-            height: 40px;
-            object-fit: contain;
-            filter: grayscale(100%);
-            opacity: 0.6;
-            transition: all 0.3s;
-        }
-        
-        .payment-logo:hover {
-            filter: grayscale(0%);
-            opacity: 1;
-        }
-        
+        /* NEW: Enhanced Footer Styles */
         .social-icon {
             width: 40px;
             height: 40px;
@@ -353,7 +342,7 @@
                                                     <div className="step-number">1</div>
                                                 </div>
                                                 <h3 className="text-xl font-semibold mb-3">Search</h3>
-                                                <p className="text-gray-600">Browse 500+ verified professionals in your city. Filter by service, price, and rating.</p>
+                                                <p className="text-gray-600">Browse 500+ verified professionals in your city</p>
                                             </div>
                                             
                                             <div className="how-it-works-step fade-in-up" style={{animationDelay: '0.2s'}}>
@@ -362,7 +351,7 @@
                                                     <div className="step-number">2</div>
                                                 </div>
                                                 <h3 className="text-xl font-semibold mb-3">Book</h3>
-                                                <p className="text-gray-600">Choose your date, time, and service duration. Add special requests if needed.</p>
+                                                <p className="text-gray-600">Choose your date, time, and service duration</p>
                                             </div>
                                             
                                             <div className="how-it-works-step fade-in-up" style={{animationDelay: '0.3s'}}>
@@ -371,7 +360,7 @@
                                                     <div className="step-number">3</div>
                                                 </div>
                                                 <h3 className="text-xl font-semibold mb-3">Pay</h3>
-                                                <p className="text-gray-600">Secure payment via MTN Mobile Money, Orange Money, or KwikPay.</p>
+                                                <p className="text-gray-600">Secure payment via MTN, Orange Money, or KwikPay</p>
                                             </div>
                                             
                                             <div className="how-it-works-step fade-in-up" style={{animationDelay: '0.4s'}}>
@@ -380,7 +369,7 @@
                                                     <div className="step-number">4</div>
                                                 </div>
                                                 <h3 className="text-xl font-semibold mb-3">Review</h3>
-                                                <p className="text-gray-600">Rate your experience and help others find great professionals.</p>
+                                                <p className="text-gray-600">Rate your experience and help others</p>
                                             </div>
                                         </div>
                                     </div>
@@ -968,37 +957,21 @@
                                         <div className="text-xl font-semibold">CRUNCH</div>
                                     </div>
                                     <p className="text-sm text-gray-600 mb-4">Uber For Side Hustles</p>
-                                    <p className="text-sm text-gray-500 mb-6">Connecting skilled professionals with people who need their services across Cameroon.</p>
                                     
-                                    {/* Social Icons */}
+                                    {/* Social Icons with hover effects */}
                                     <div className="flex gap-3 mb-6">
-                                        <a href="https://twitter.com/crunch" target="_blank" className="social-icon" title="Twitter">
-                                            🐦
-                                        </a>
-                                        <a href="https://instagram.com/crunch" target="_blank" className="social-icon" title="Instagram">
-                                            📸
-                                        </a>
-                                        <a href="https://wa.me/237670791352" target="_blank" className="social-icon" title="WhatsApp">
-                                            💬
-                                        </a>
-                                        <a href="https://facebook.com/crunch" target="_blank" className="social-icon" title="Facebook">
-                                            👍
-                                        </a>
+                                        <a href="https://twitter.com/crunch" target="_blank" className="social-icon" title="Twitter">🐦</a>
+                                        <a href="https://instagram.com/crunch" target="_blank" className="social-icon" title="Instagram">📸</a>
+                                        <a href="https://wa.me/237670791352" target="_blank" className="social-icon" title="WhatsApp">💬</a>
                                     </div>
                                     
                                     {/* Payment Methods */}
                                     <div>
                                         <div className="text-xs font-medium uppercase text-gray-500 mb-3">We Accept</div>
-                                        <div className="flex flex-wrap gap-4 items-center">
-                                            <div className="payment-logo-wrapper" title="MTN Mobile Money">
-                                                <div className="px-4 py-2 bg-yellow-400 rounded text-white font-bold text-sm">MTN MoMo</div>
-                                            </div>
-                                            <div className="payment-logo-wrapper" title="Orange Money">
-                                                <div className="px-4 py-2 bg-orange-500 rounded text-white font-bold text-sm">Orange Money</div>
-                                            </div>
-                                            <div className="payment-logo-wrapper" title="KwikPay">
-                                                <div className="px-4 py-2 bg-blue-600 rounded text-white font-bold text-sm">KwikPay</div>
-                                            </div>
+                                        <div className="flex flex-wrap gap-3">
+                                            <div className="px-3 py-1 bg-yellow-400 rounded text-white font-bold text-xs">MTN</div>
+                                            <div className="px-3 py-1 bg-orange-500 rounded text-white font-bold text-xs">Orange</div>
+                                            <div className="px-3 py-1 bg-blue-600 rounded text-white font-bold text-xs">KwikPay</div>
                                         </div>
                                     </div>
                                 </div>
@@ -1006,52 +979,25 @@
                                     <div className="text-xs font-medium uppercase text-gray-500 mb-4">Company</div>
                                     <div className="space-y-2 text-sm">
                                         <div><button onClick={() => setCurrentView('about')} className="hover:underline">About</button></div>
-                                        <div><button onClick={() => setCurrentView('terms')} className="hover:underline">Terms & Conditions</button></div>
                                         <div><button onClick={() => setCurrentView('contact')} className="hover:underline">Contact</button></div>
-                                        <div><a href="#" className="hover:underline">Privacy Policy</a></div>
-                                        <div><a href="#" className="hover:underline">Careers</a></div>
                                     </div>
                                 </div>
                                 <div>
                                     <div className="text-xs font-medium uppercase text-gray-500 mb-4">Contact</div>
-                                    <div className="space-y-3 text-sm">
+                                    <div className="space-y-2 text-sm">
                                         <div className="flex items-center gap-2">
                                             <span>📧</span>
-                                            <a href="mailto:rikrhahim@gmail.com" className="hover:underline">rikrhahim@gmail.com</a>
+                                            <a href="mailto:rikrhahim@gmail.com" className="hover:underline">Email Us</a>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <span>📱</span>
                                             <a href="tel:+237670791352" className="hover:underline">+237 670 791 352</a>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <span>📍</span>
-                                            <span className="text-gray-600">Yaoundé, Cameroon</span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            {/* Bottom Bar */}
-                            <div className="pt-8 border-t">
-                                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                                    <div className="text-sm text-gray-500 text-center md:text-left">
-                                        © 2026 CRUNCH. All rights reserved.
-                                    </div>
-                                    <div className="flex items-center gap-4 text-xs text-gray-500">
-                                        <span className="flex items-center gap-1">
-                                            <span>🔒</span>
-                                            <span>Secure Platform</span>
-                                        </span>
-                                        <span className="flex items-center gap-1">
-                                            <span>✓</span>
-                                            <span>Verified Professionals</span>
-                                        </span>
-                                        <span className="flex items-center gap-1">
-                                            <span>⚡</span>
-                                            <span>Fast Booking</span>
-                                        </span>
-                                    </div>
-                                </div>
+                            <div className="pt-8 border-t text-center text-sm text-gray-500">
+                                © 2026 CRUNCH. All rights reserved.
                             </div>
                         </div>
                     </footer>
