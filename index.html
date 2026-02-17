@@ -551,15 +551,14 @@
                 // Send email notification to provider
                 if (data && data[0]) {
                     try {
-                        const emailResponse = await fetch('https://api.resend.com/emails', {
+                        const emailResponse = await fetch('https://thgfclfgelfrcftycdna.supabase.co/functions/v1/resend-email', {
                             method: 'POST',
                             headers: {
-                                'Authorization': 'Bearer re_dZzsN5gZ_BAxFoKvyTpmDciG3WuezghRB',
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                             },
                             body: JSON.stringify({
-                                from: 'CRUNCH <noreply@resend.dev>',
-                                to: selectedProvider.email || 'rikrhahim@gmail.com',
+                                to: selectedProvider.email || 'rikhrahim@gmail.com',
                                 subject: '🔔 New Booking Request - CRUNCH',
                                 html: `
                                     <!DOCTYPE html>
@@ -609,7 +608,7 @@
                                                     </td></tr>
                                                     <tr><td style="padding:30px;background:#f9fafb;border-top:1px solid #e5e7eb">
                                                         <p style="margin:0 0 8px;font-size:12px;color:#999;text-align:center">This is an automated email from CRUNCH. Please do not reply.</p>
-                                                        <p style="margin:0;font-size:12px;color:#999;text-align:center">Need help? <a href="mailto:rikrhahim@gmail.com" style="color:#0066cc;text-decoration:none">rikrhahim@gmail.com</a> or <a href="tel:+237670791352" style="color:#0066cc;text-decoration:none">+237 670 791 352</a></p>
+                                                        <p style="margin:0;font-size:12px;color:#999;text-align:center">Need help? <a href="mailto:rikhrahim@gmail.com" style="color:#0066cc;text-decoration:none">rikhrahim@gmail.com</a> or <a href="tel:+237670791352" style="color:#0066cc;text-decoration:none">+237 670 791 352</a></p>
                                                     </td></tr>
                                                 </table>
                                             </td></tr>
