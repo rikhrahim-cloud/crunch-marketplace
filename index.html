@@ -249,6 +249,8 @@
             // UI State
             const [currentView, setCurrentView] = useState('home');
             const [userType, setUserType] = useState(null);
+            const [isCustomer, setIsCustomer] = useState(false);
+            const [isProvider, setIsProvider] = useState(false);
             const [isLoggedIn, setIsLoggedIn] = useState(false);
             const [currentUser, setCurrentUser] = useState(null);
             const [providers, setProviders] = useState([]);
@@ -312,6 +314,8 @@
                         setCurrentUser(profile);
                         setIsLoggedIn(true);
                         setUserType(profile.user_type);
+                        setIsCustomer(profile.is_customer || false);
+                        setIsProvider(profile.is_provider || false);
                     }
                 }
                 setLoading(false);
@@ -395,6 +399,8 @@
                     setCurrentUser(profile);
                     setIsLoggedIn(true);
                     setUserType(profile.user_type);
+                    setIsCustomer(profile.is_customer || false);
+                    setIsProvider(profile.is_provider || false);
                     setShowLoginModal(false);
                     setLoginEmail('');
                     setLoginPassword('');
@@ -427,7 +433,7 @@
                 }
 
                 if (data.user) {
-                    // Create profile
+                    // Create profile with dual role flags
                     const { error: profileError } = await supabase
                         .from('profiles')
                         .insert([{
@@ -435,7 +441,9 @@
                             email: registerEmail,
                             full_name: registerName,
                             phone: registerPhone,
-                            user_type: loginType
+                            user_type: loginType,
+                            is_customer: loginType === 'user' || loginType === 'customer',
+                            is_provider: loginType === 'provider'
                         }]);
 
                     if (profileError) {
@@ -700,11 +708,13 @@
                                     <button onClick={() => setCurrentView('contact')} className="text-sm hover:text-gray-600 transition">Contact</button>
                                     <button 
                                         onClick={() => { 
-                                            if (isLoggedIn && userType === 'provider') {
+                                            if (isLoggedIn && isProvider) {
                                                 setShowProfileModal(true);
                                             } else if (!isLoggedIn) {
                                                 setShowLoginModal(true);
                                                 setLoginType('provider');
+                                            } else {
+                                                alert('You need provider access. Contact support to become a provider!');
                                             }
                                         }} 
                                         className="bg-black text-white px-6 py-2.5 text-sm hover:bg-gray-800 transition rounded-md font-medium"
@@ -720,7 +730,7 @@
                                         </>
                                     ) : (
                                         <>
-                                            {userType === 'provider' && (
+                                            {isProvider && (
                                                 <button onClick={() => setShowProfileModal(true)} className="text-sm hover:text-gray-600 transition">My Profile</button>
                                             )}
                                             {userType === 'admin' && (
@@ -1029,13 +1039,19 @@
                                                 </div>
                                             </div>
 
-                                            {isLoggedIn && (userType === 'user' || userType === 'customer') && (
+                                            {isLoggedIn && isCustomer && (
                                                 <button
                                                     onClick={() => setShowBookingModal(true)}
                                                     className="w-full bg-black text-white py-4 text-sm font-medium hover:bg-gray-800 transition rounded-md"
                                                 >
                                                     BOOK NOW
                                                 </button>
+                                            )}
+
+                                            {isLoggedIn && !isCustomer && (
+                                                <div className="w-full bg-gray-100 text-gray-500 py-4 text-sm font-medium text-center rounded-md">
+                                                    You need customer access to book services
+                                                </div>
                                             )}
 
                                             {!isLoggedIn && (
