@@ -264,6 +264,12 @@
             const [isCustomer, setIsCustomer] = useState(false);
             const [isProvider, setIsProvider] = useState(false);
             const [language, setLanguage] = useState('en');
+const [stats, setStats] = useState({
+    providers: 0,
+    cities: 0,
+    jobs: 0,
+    rating: 0
+});
             const [isLoggedIn, setIsLoggedIn] = useState(false);
             const [currentUser, setCurrentUser] = useState(null);
             const [providers, setProviders] = useState([]);
@@ -311,6 +317,7 @@
             useEffect(() => {
                 checkUser();
                 loadProviders();
+                loadStats();
             }, []);
 
             // Check if user is logged in
@@ -335,7 +342,42 @@
             };
 
             // Load all providers from database
-            const loadProviders = async () => {
+const loadStats = async () => {
+    try {
+        const { count: providerCount } = await supabase
+            .from('providers')
+            .select('*', { count: 'exact', head: true })
+            .eq('available', true);
+
+        const { data: cities } = await supabase
+            .from('providers')
+            .select('city');
+        const uniqueCities = [...new Set(cities?.map(p => p.city))].length;
+
+        const { count: jobsCount } = await supabase
+            .from('bookings')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'completed');
+
+        const { data: ratings } = await supabase
+            .from('providers')
+            .select('rating')
+            .gt('rating', 0);
+        const avgRating = ratings?.length > 0 
+            ? (ratings.reduce((sum, p) => sum + p.rating, 0) / ratings.length).toFixed(1)
+            : 4.8;
+
+        setStats({
+            providers: providerCount || 0,
+            cities: uniqueCities || 6,
+            jobs: jobsCount || 0,
+            rating: avgRating
+        });
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+};            
+const loadProviders = async () => {
                 const { data, error } = await supabase
                     .from('providers')
                     .select(`
@@ -775,28 +817,7 @@
                                     </div>
                                 </section>
 {/* Statistics Section */}
-<section className="py-16 px-6 bg-gray-50">
-    <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-                <div className="text-4xl font-bold mb-2 crunch-gradient">500+</div>
-                <div className="text-sm text-gray-600">Active Professionals</div>
-            </div>
-            <div className="text-center">
-                <div className="text-4xl font-bold mb-2 crunch-gradient">10</div>
-                <div className="text-sm text-gray-600">Cities Served</div>
-            </div>
-            <div className="text-center">
-                <div className="text-4xl font-bold mb-2 crunch-gradient">1,000+</div>
-                <div className="text-sm text-gray-600">Jobs Completed</div>
-            </div>
-            <div className="text-center">
-                <div className="text-4xl font-bold mb-2 crunch-gradient">4.9★</div>
-                <div className="text-sm text-gray-600">Average Rating</div>
-            </div>
-        </div>
-    </div>
-</section>
+
                                 {/* Featured Providers */}
                                 {providers.filter(p => p.featured).length > 0 && (
                                     <section className="py-20 px-6 bg-white">
@@ -1383,23 +1404,39 @@
                                     <div className="bg-gray-50 rounded-2xl p-12 mb-16">
                                         <h2 className="text-3xl font-bold mb-8 text-center" style={{letterSpacing: '-0.02em'}}>By the Numbers</h2>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                                            <div className="text-center">
-                                                <div className="text-4xl font-bold mb-2 crunch-gradient">500+</div>
-                                                <div className="text-sm text-gray-600">Active Professionals</div>
-                                            </div>
-                                            <div className="text-center">
-                                                <div className="text-4xl font-bold mb-2 crunch-gradient">10</div>
-                                                <div className="text-sm text-gray-600">Cities Served</div>
-                                            </div>
-                                            <div className="text-center">
-                                                <div className="text-4xl font-bold mb-2 crunch-gradient">1,000+</div>
-                                                <div className="text-sm text-gray-600">Jobs Completed</div>
-                                            </div>
-                                            <div className="text-center">
-                                                <div className="text-4xl font-bold mb-2 crunch-gradient">4.9★</div>
-                                                <div className="text-sm text-gray-600">Average Rating</div>
-                                            </div>
-                                        </div>
+    <div className="text-center">
+        <div className="text-4xl font-bold mb-2 crunch-gradient">
+            {stats.providers > 0 ? `${stats.providers}+` : '...'}
+        </div>
+        <div className="text-sm text-gray-600">
+            {language === 'en' ? 'Active Professionals' : 'Professionnels Actifs'}
+        </div>
+    </div>
+    <div className="text-center">
+        <div className="text-4xl font-bold mb-2 crunch-gradient">
+            {stats.cities > 0 ? stats.cities : '...'}
+        </div>
+        <div className="text-sm text-gray-600">
+            {language === 'en' ? 'Cities Served' : 'Villes Servies'}
+        </div>
+    </div>
+    <div className="text-center">
+        <div className="text-4xl font-bold mb-2 crunch-gradient">
+            {stats.jobs > 0 ? `${stats.jobs}+` : '...'}
+        </div>
+        <div className="text-sm text-gray-600">
+            {language === 'en' ? 'Jobs Completed' : 'Travaux Terminés'}
+        </div>
+    </div>
+    <div className="text-center">
+        <div className="text-4xl font-bold mb-2 crunch-gradient">
+            {stats.rating > 0 ? `${stats.rating}★` : '...'}
+        </div>
+        <div className="text-sm text-gray-600">
+            {language === 'en' ? 'Average Rating' : 'Note Moyenne'}
+        </div>
+    </div>
+</div>
                                     </div>
 
                                     {/* For Professionals */}
