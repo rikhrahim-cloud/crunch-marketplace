@@ -531,7 +531,16 @@ const loadProviders = async () => {
 
             // Register new user
             const handleRegister = async () => {
-                if (!registerEmail || !registerPassword || !registerName) {
+                if (!registerEmail || !registerPassword || !registerName || !registerPhone) {
+    alert('Please fill in all fields including phone number');
+    return;
+}
+
+// Validate phone number format
+if (registerPhone && !registerPhone.match(/^\+?[0-9]{9,15}$/)) {
+    alert('Please enter a valid phone number (9-15 digits)');
+    return;
+}
                     alert('Please fill in all fields');
                     return;
                 }
@@ -566,7 +575,7 @@ const loadProviders = async () => {
                         return;
                     }
 
-                    alert('Account created! Please check your email to verify your account.');
+                    alert('✅ Account created! You can sign in now. Notifications will be sent via WhatsApp to ' + registerPhone);
                     setShowRegisterModal(false);
                     setRegisterEmail('');
                     setRegisterPassword('');
@@ -775,14 +784,13 @@ const loadProviders = async () => {
                                     <span className="text-2xl font-bold tracking-tight">CRUNCH</span>
                                 </button>
                                 <nav className="hidden md:flex items-center space-x-8">
-                                    <button onClick={() => setCurrentView('home')} className="text-sm hover:text-gray-600 transition">Browse</button>
-                                    <button onClick={() => setCurrentView('about')} className="text-sm hover:text-gray-600 transition">About</button>
-                                    <button onClick={() => setCurrentView('contact')} className="text-sm hover:text-gray-600 transition">Contact</button>
-<button 
+                                    <button onClick={() => setCurrentView('home')} className="text-sm hover:text-gray-600 transition">{language === 'en' ? 'Browse' : 'Parcourir'}</button>
+<button onClick={() => { setShowLoginModal(true); setLoginType('user'); }} className="text-sm hover:text-gray-600 transition">{language === 'en' ? 'Sign In' : 'Se Connecter'}</button>
+<button onClick={() => setShowRegisterModal(true)} className="bg-black text-white px-6 py-2.5 text-sm hover:bg-gray-800 transition rounded-md">{language === 'en' ? 'Join Now' : 'Rejoindre'}</button>
     onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
     className="text-xs font-semibold px-3 py-1.5 border border-gray-200 rounded-md hover:bg-gray-50 transition ml-4"
 >
-    {language === 'en' ? '🇫🇷 FR' : '🇬🇧 EN'}
+    <span>{language === 'en' ? '🇫🇷' : '🇬🇧'} {language === 'en' ? 'FR' : 'EN'}</span>
 </button>
                                 </nav>
                                 <div className="flex items-center gap-4">
@@ -794,12 +802,12 @@ const loadProviders = async () => {
                                     ) : (
                                         <>
                                             {isProvider && (
-                                                <button onClick={() => setShowProfileModal(true)} className="text-sm hover:text-gray-600 transition">My Profile</button>
+                                                <button onClick={() => setShowProfileModal(true)} className="text-sm hover:text-gray-600 transition">{language === 'en' ? 'My Profile' : 'Mon Profil'}</button>
                                             )}
                                             {userType === 'admin' && (
                                                 <button onClick={() => setCurrentView('admin')} className="text-sm bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">Admin Panel</button>
                                             )}
-                                            <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-700 transition">Logout</button>
+                                            <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-700 transition">{language === 'en' ? 'Logout' : 'Déconnexion'}</button>
                                         </>
                                     )}
                                 </div>
@@ -1592,7 +1600,7 @@ const loadProviders = async () => {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium mb-2">Phone (Optional)</label>
+                                        <label className="block text-sm font-medium mb-2">Phone (Required for WhatsApp)</label>
                                         <input
                                             type="tel"
                                             placeholder="+237 XXX XXX XXX"
